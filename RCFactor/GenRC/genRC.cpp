@@ -35,11 +35,13 @@ int main(int argc, char* argv[]) {
   
   std::string target = argv[1];
   int nPion = (int)*argv[2] - 48;
-  int Q2Bin = (int)*argv[3] - 48;
-  int NuBin = (int)*argv[4] - 48;
+  int Q2BinSelect = (int)*argv[3] - 48;
+  int NuBinSelect = (int)*argv[4] - 48;
+  //int ZhBinSelect = (int)*argv[5] - 48;
   std::cout << "N PION = " << nPion << std::endl;
-  std::cout << "Q2 bin = " << Q2Bin << std::endl;
-  std::cout << "Nu bin = " << NuBin << std::endl;
+  std::cout << "Q2 bin = " << Q2BinSelect << std::endl;
+  std::cout << "Nu bin = " << NuBinSelect << std::endl;
+  //std::cout << "Zh bin = " << NuBinSelect << std::endl;
   // Creating a array of chars instead of a string to use Form method
   int n = target.length();
   char targetArr[n + 1];
@@ -49,17 +51,11 @@ int main(int argc, char* argv[]) {
   // Double_t f3;
   Double_t NAZ;
   Double_t m = TMath::Power((kMassNeutron + kMassPion), 2);
-  float Masa = 0.938; // Mass Nucleon (Proton)
+  //float Masa = 0.938; // Mass Nucleon (Proton)
   Double_t a1, a2, a3;
-  int sysReturn;
-
-  gROOT->cd();
-  TFile* outputFile = new TFile(outputDirectory + Form("RcFactors_%s_%i%i_%i.root", targetArr, Q2Bin, NuBin, nPion), "RECREATE");
-  gROOT->cd();
+  //int sysReturn;
 
   TRadCor rc;
-
-
   a1 = 1;
   a2 = 0;
   a3 = a1/a2;
@@ -69,69 +65,58 @@ int main(int argc, char* argv[]) {
   else if(target == "Pb")  NAZ = 82./208.;
   else if(target == "DC")  NAZ = 0.5;
   else if(target == "DFe") NAZ = 0.5;
-  else if(target == "DPb") NAZ = 0.5;
+  else if(target == "DPb") NAZ = 0.5; 
   else NAZ = 0.5;
 
   TH1F* histRcFactors  = new TH1F("RcFactors", "", N_Phi, -180, 180);
 
-  //for(int nPion = nPionSelect; nPion < nPionSelect + 1 ; nPion++) { // Loops in every number of pion
+  TFile* fileBins = new TFile(Form(inputDirectory + "Centroid_%s.root", targetArr), "READ");
+  TNtuple* ntupleBins = (TNtuple*) fileBins->Get(Form("Centroid_%i", nPion));
+  gROOT->cd();
+  float Q2, Xb, Zh, Pt, Phi;
+  float Q2Bin, NuBin, ZhBin, Pt2Bin;
 
-    sysReturn = system("cp " + inputDirectory + target + Form("newphihist%i.root .", nPion));
-    if(sysReturn == 256){
-	    std::cout << "File " << inputDirectory << target  << " not found" << std::endl;
-	    return 0;
-    }
-    sysReturn = system(("mv " + target + Form("newphihist%i.root", nPion) + " newphihist.root").c_str() );
+  ntupleBins->SetBranchAddress("Q2", &Q2);
+  ntupleBins->SetBranchAddress("Xb", &Xb);
+  ntupleBins->SetBranchAddress("Zh", &Zh);
+  ntupleBins->SetBranchAddress("Pt", &Pt);
+  ntupleBins->SetBranchAddress("Q2Bin",  &Q2Bin);
+  ntupleBins->SetBranchAddress("NuBin",  &NuBin);
+  ntupleBins->SetBranchAddress("ZhBin",  &ZhBin);
+  ntupleBins->SetBranchAddress("Pt2Bin", &Pt2Bin);
 
-    TFile* fileBins = new TFile("newphihist.root", "READ");
-    TNtuple* ntupleBins = (TNtuple*) fileBins->Get("AAcAcc_data");
 
-    float Q2, Xb, Zh, Pt, Phi;
+  gROOT->cd();
+  TFile* outputFile = new TFile(outputDirectory + Form("RcFactors_%s_%i%i%i_%i.root", targetArr, 
+	                                (int)Q2Bin, (int)NuBin, (int)ZhBin, nPion), "RECREATE");
+  gROOT->cd();
+  for(int i = 0; i < ntupleBins->GetEntries(); i++) {
+    ntupleBins->GetEntry(i);
+    if((int)Q2Bin != Q2BinSelect || (int)NuBin != NuBinSelect) { continue; } 
+    for(int PhiCounter = 0 ; PhiCounter < N_Phi ; PhiCounter++) { // Loops in every Phi bin
 
-    ntupleBins->SetBranchAddress("Q2", &Q2);
-    ntupleBins->SetBranchAddress("Xb", &Xb);
-    ntupleBins->SetBranchAddress("Zh", &Zh);
-    ntupleBins->SetBranchAddress("Pt", &Pt);
+      Phi = (Phi_BINS[PhiCounter] + Phi_BINS[PhiCounter+1])/2;
+      rc.CalculateRCFactor(5.015, Xb, Q2, Zh, Pt, Phi, m, NAZ);
+      f1 = rc.GetFactor1();
+      // f3 = rc.GetFactor3();
+      if(TMath::IsNaN(f1) || f1 == a3) f1 = 0;
+      // if(TMath::IsNaN(f3) || f3 == a3) f3 = 0;
+      std::cout << "El Factor es: " << f1 << std::endl;
+      histRcFactors->SetBinContent(PhiCounter + 1, f1);
+    }// End Phi loop
 
-    float Q2Select = (Q2_BINS[Q2Bin] + Q2_BINS[Q2Bin+1])/2;
-    float Nu = (Nu_BINS[NuBin] + Nu_BINS[NuBin+1])/2;
-    float XbSelect = Q2Select/(2*Masa*Nu);
-
-  std::cout << "Q2 " << Q2Select << std::endl;
-  std::cout << "Nu " << Nu << std::endl;
-  std::cout << "Xb " << XbSelect << std::endl;
-
-    for(int i = 0; i < ntupleBins->GetEntries(); i++) {
-      ntupleBins->GetEntry(i);
-  //std::cout << "Hey " << Xb << std::endl;
-      if(Q2 != Q2Select || Xb != XbSelect) { /*std::cout << "Hey so here" << std::endl;*/ continue; } 
-  //std::cout << "Hey" << NuBin << std::endl;
-      for(int PhiCounter = 0 ; PhiCounter < N_Phi ; PhiCounter++) { // Loops in every Phi bin
-        std::cout << "Bin selected: " << nPion <<  "-" << Q2 << "-" << Xb << "-" << Zh << "-" << Pt << "-" << PhiCounter << std::endl;
-
-        Phi = (Phi_BINS[PhiCounter] + Phi_BINS[PhiCounter+1])/2;
-
-        rc.CalculateRCFactor(5.015, Xb, Q2, Zh, Pt, Phi, m, NAZ);
-				f1 = rc.GetFactor1();
-				// f3 = rc.GetFactor3();
-				if(TMath::IsNaN(f1) || f1 == a3) f1 = 0;
-				// if(TMath::IsNaN(f3) || f3 == a3) f3 = 0;
-        std::cout << "El Factor es: " << f1 <<std::endl;
-        histRcFactors->SetBinContent(PhiCounter + 1, f1);
-      }// End Phi loop
-
-      outputFile->cd();
-      histRcFactors->Write(Form("RcFactor_%s_%.3f%.3f%.3f%.3f_%i", targetArr, Q2, Xb, Zh, Pt, nPion));
-      histRcFactors->Reset();
-      gROOT->cd();
+    outputFile->cd();
+    histRcFactors->Write(Form("RcFactor_%s_%i%i%i%i_%i", targetArr, (int)Q2Bin, (int)NuBin, 
+			      (int)ZhBin, (int)Pt2Bin, nPion));
+    histRcFactors->Reset();
+    gROOT->cd();
 
     }
     delete ntupleBins;
     fileBins->Close();
-    sysReturn = system("rm newphihist.root");
-  //}// End number pion event loop
 
   outputFile->Close();
   t.Print();
   return 0;
 }
+
