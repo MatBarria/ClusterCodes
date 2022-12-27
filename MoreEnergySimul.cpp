@@ -14,8 +14,8 @@
 #include "TStopwatch.h"
 #include "TROOT.h"
 
-const TString dataDirectory = "/work/mbarrial/Data";
-const TString dataDirectory = "/work/mbarrial/Data";
+TString simulDirectory = "/work/mbarrial/out/GetSimpleTuple_HSim/";
+TString dataDirectory = "/work/mbarrial/Data";
 
 int main(int argc, char* argv[]) {
 
