@@ -6,7 +6,7 @@ NPION=${INPUTARRAY[1]}
 MAINDIR=/work/mbarrial/ClusterCodes/RCFactor
 BINDIR=${MAINDIR}/GenRC
 SHDIR=${MAINDIR}/sh
-DATADIR=/work/mbarrial/Data/RC
+DATADIR=/work/mbarrial/Data/RCNominal
 
 cd ${BINDIR}
 

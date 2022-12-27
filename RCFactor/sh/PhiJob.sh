@@ -1,6 +1,6 @@
 # set dirs
-JOBDIR=/work/mbarrial/Pt2Broadening_multi-pion/RCFactor/bin          # dir to store logs and job scripts
-LOGSDIR=/work/mbarrial/Pt2Broadening_multi-pion/RCFactor/logs
+JOBDIR=/work/mbarrial/ClusterCodes/RCFactor/bin          # dir to store logs and job scripts
+LOGSDIR=/work/mbarrial/ClusterCodes/RCFactor/logs
 #JOBDIR=/home/matias/proyecto/Pt2Broadening_multi-pion/bin          # dir to store logs and job scripts
 #LOGSDIR=/home/matias/proyecto/Pt2Broadening_multi-pion/logs
 

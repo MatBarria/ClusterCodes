@@ -1,5 +1,4 @@
-MAINDIR=/work/mbarrial/Pt2Broadening_multi-pion/RCFactor
-#MAINDIR=/home/matias/proyecto/Pt2Broadening_multi-pion/RCFactor
+MAINDIR=/work/mbarrial/ClusterCodes/RCFactor
 SHDIR=${MAINDIR}/sh
 BINDIR=${MAINDIR}/bin
 
