@@ -1,10 +1,7 @@
-// This code generate a tuple with the all the events in the simultion
-// The tuple has the number of generate pion , dectected pion, the values of Q2, Nu and
-// for the hadrons variables calculate vectorial momentum and use it as the hadron momentum for the event
 // The code run over the simulation generated with the code GetSimpleTuple
 // https://github.com/utfsm-eg2-data-analysis/GetSimpleTuple
 // It can be compile with
-// g++ -Wall -fPIC  `root-config --cflags` MoreEnergySimul.cpp -o ./bin/MoreEnergySimul  `root-config --glibs`
+// g++ -Wall -fPIC  `root-config --cflags` MoreEnergySimul.cpp -o ./bin/MoreEnergySimul `root-config --glibs`
 // For the target name use (D,C,Fe,Pb)
 
 #include <iostream>
@@ -17,167 +14,386 @@
 #include "TStopwatch.h"
 #include "TROOT.h"
 
+const TString dataDirectory = "/work/mbarrial/Data";
+const TString dataDirectory = "/work/mbarrial/Data";
+
 int main(int argc, char* argv[]) {
 
-  if(argc != 2) {
-    std::cout << "Insert (just) the target name as a parameter" << std::endl;
+    if(argc != 2) {
+        std::cout << "Insert (just) the target name as a parameter" << std::endl;
+        return 0;
+    }
+
+    TStopwatch t;
+
+    // For the Target name use (D,C,Fe,Pb)
+    std::string target = argv[1];
+    // Creating a array of chars instead of a string to use Form method
+    int n = target.length();
+    char targetArr[n + 1];
+    strcpy(targetArr, target.c_str());
+    int dummyval = -999; // Value for the variables of pions that was not Gen/Rec  
+
+    std::cout << "Start" << std::endl;
+    TString inputName;
+    int ZhMax, MaxIndex;
+    // Set the variables that we want to save
+    const char* VarList =
+        "Gen:Q2_gen:Nu_gen:Zh_gen:Pt2_gen:PhiPQ_gen:Rec:Q2_rec:Nu_rec:Zh_rec:Pt2_rec:PhiPQ_rec";
+    float *vars = new Float_t[24];
+    float *vars_save = new Float_t[12];
+
+    TNtuple* outputTuple = new TNtuple("ntuple_sim", "", VarList);
+
+    for(int folder = 1; folder < 10; folder++) { // Loops in every directory
+        for(int sim = 1; sim < 500; sim++) { // Loops in every simulation of the directory
+                                             // Set the name of the file where is the data depends on the target and the folder
+            if(targetArr[0] == 'D' ){
+                if(folder < 4) {
+                    inputName = Form(simulDirectory + "D2_pb%i/prunedD_%i.root", folder, sim);
+                } else {
+                    inputName = Form(simulDirectory + "D2_pb%i_yshiftm03/prunedD_%i.root", 
+                                    folder, sim);
+                }
+            } else {
+                if(folder < 4) {
+                    inputName = Form(simulDirectory + "%s%i/pruned%s_%i.root", targetArr,
+                                    folder, targetArr, sim);
+                } else {
+                    inputName = Form(simulDirectory + "%s%i_yshiftm03/pruned%s_%i.root",
+                            targetArr, folder, targetArr, sim);
+                }
+            }
+            //std::cout << "Checking directory " << folder << "  " << sim << std::endl;
+            //inputName = Form("/home/matias/proyecto/Piones/Data/Simul/pruned%s_%i.root",targetArr ,sim);
+            // Open the file and check if it's exist
+            TFile* fSource = new TFile(inputName,"READ");
+            if (fSource->IsZombie()) {
+                fSource->Close();
+                continue;
+            }
+            // Open the tuple and check if it's exist
+            TNtuple* simulTuple = (TNtuple*)fSource->Get("ntuple_sim");
+            if(simulTuple == NULL) {
+                delete simulTuple;
+                fSource->Close();
+                continue;
+            }
+
+            gROOT->cd();
+
+            float tmpEvnt, evnt;
+            float pidGen, pidRec, Q2Gen, NuGen, Pt2Gen, PhiGen, ZhGen;
+            float Q2Rec, NuRec, Pt2Rec, PhiRec, ZhRec, deltaZ;
+            float Pt3_rec, PhiPQ3_rec, Zh3_rec;
+            float Pt3_gen, PhiPQ3_gen, Zh3_gen;
+
+            // Read the necesary variables
+            simulTuple->SetBranchAddress("evnt",&evnt);
+            simulTuple->SetBranchAddress("mc_pid",&pidGen);
+            simulTuple->SetBranchAddress("pid",&pidRec);
+            simulTuple->SetBranchAddress("mc_Q2",&Q2Gen);
+            simulTuple->SetBranchAddress("mc_Nu",&NuGen);
+            simulTuple->SetBranchAddress("mc_Zh",&ZhGen);
+            simulTuple->SetBranchAddress("mc_Pt2",&Pt2Gen);
+            simulTuple->SetBranchAddress("mc_PhiPQ",&PhiGen);
+            simulTuple->SetBranchAddress("Q2",&Q2Rec);
+            simulTuple->SetBranchAddress("Nu",&NuRec);
+            simulTuple->SetBranchAddress("Zh",&ZhRec);
+            simulTuple->SetBranchAddress("Pt2",&Pt2Rec);
+            simulTuple->SetBranchAddress("PhiPQ",&PhiRec);
+            simulTuple->SetBranchAddress("deltaZ",&deltaZ);
+            // Create the variables to use inside of the for loops
+            //vars[0] = 0; // Count how many pions were generated in the event
+            //vars[1] = 0; // Count how many pions were detected in the event
+            int tmpCounter = 0;
+            //float tmpEvnt;
+            //float tmpZh[5], tmpPt[5], tmpPhi[5] ;
+            int isPion;
+
+            for(int i = 0; i < simulTuple->GetEntries(); i++) { // Loops generated particles
+                isPion = 0; // Count if there is a gen or rec pion in the evnt 
+                simulTuple->GetEntry(i);
+                ZhMax = 0; 
+                MaxIndex = -1;
+                // Set all varibles at dummyVal at start to avoid errors
+                for(int j = 0; j < 24; j++) {
+                    vars[j] = dummyval;
+                }
+
+                vars[0]  = 0; // number of Gen Pion 
+                vars[12] = 0; // number of Rec Pion
+
+                Zh3_gen = 0;
+                Pt3_gen = 0;
+                PhiPQ3_gen = 0;
+                Zh3_rec = 0;
+                Pt3_rec = 0;
+                PhiPQ3_rec = 0;
+
+
+                // Check if there is a Gen or Rec pion in th
+                if(pidGen == 211 || (pidRec == 211 && TMath::Abs(deltaZ) < 3)) {
+                    isPion++;
+                    if(pidGen == 211) {
+                        // Save the angle PhiPQ,Zh and Pt if it's a pion
+                        vars[0] = 1;
+                        vars[1] = Q2Gen;
+                        vars[2] = NuGen;
+                        vars[3] = ZhGen;
+                        vars[4] = Pt2Gen;
+                        vars[5] = PhiGen;
+                    } else{
+                        for(int i = 1; i <= 5; i++) { vars[i] = dummyval; }
+                    }
+                    if(pidRec == 211) {
+                        // Save the angle PhiPQ,Zh and Pt if it's a pion
+                        vars[12] = 1;
+                        vars[13] = Q2Rec;
+                        vars[14] = NuRec;
+                        vars[15] = ZhRec;
+                        vars[16] = Pt2Rec;
+                        vars[17] = PhiRec;
+                    } else {
+                        for(int i = 7; i <= 11; i++) { vars[i] = dummyval; }
+                    }
+                }
+
+                tmpEvnt = evnt;
+                simulTuple->GetEntry(i + 1);
+                // Check if the next particle cames from the same event
+                while(tmpEvnt == evnt) { // Check all the paricles in the event
+                    if((pidGen == 211 || (pidRec == 211 && TMath::Abs(deltaZ) < 3)) && (isPion < 2)) {
+                        if(pidGen == 211) {
+                            // Save the angle PhiPQ,Zh and Pt if it's a pion
+                            vars[0]++;
+                            vars[1] = Q2Gen;
+                            vars[2] = NuGen;
+                            vars[isPion*3+3] = ZhGen;
+                            vars[isPion*3+4] = Pt2Gen;
+                            vars[isPion*3+5] = PhiGen;
+                        } else{
+                            vars[isPion*3+3] = dummyval;
+                            vars[isPion*3+4] = dummyval;
+                            vars[isPion*3+5] = dummyval;
+                        }
+                        if(pidRec == 211) {
+                            // Save the angle PhiPQ,Zh and Pt if it's a pion
+                            vars[12]++;
+                            vars[13] = Q2Rec;
+                            vars[14] = NuRec;
+                            vars[isPion*3+15] = ZhRec;
+                            vars[isPion*3+16] = Pt2Rec;
+                            vars[isPion*3+17] = PhiRec;
+                        } else {
+                            vars[isPion*3+15] = dummyval;
+                            vars[isPion*3+16] = dummyval;
+                            vars[isPion*3+17] = dummyval;
+                        }
+                        isPion++;
+                    } else if((pidGen == 211 || (pidRec == 211 && TMath::Abs(deltaZ) < 3)) && (isPion = 2)) {
+                        if(pidGen == 211) {
+                            // Save the angle PhiPQ,Zh and Pt if it's a pion
+                            if(vars[0] == 0) {
+                                vars[3] = ZhGen;
+                                vars[4] = Pt2Gen;
+                                vars[5] = PhiGen;
+                            }
+                            if(vars[0] == 1) {
+                                vars[6]= ZhGen;
+                                vars[7]= Pt2Gen;
+                                vars[8]= PhiGen;
+                            }
+                            if(vars[0] == 2) {
+                                Zh3_gen = ZhGen;
+                                Pt3_gen = Pt2Gen;
+                                PhiPQ3_gen = PhiGen;
+                            }
+                            vars[0]++;
+                        }
+
+                        if(pidRec == 211) {
+                            if(vars[12] == 0) {
+                                vars[15] = ZhRec;
+                                vars[16] = Pt2Rec;
+                                vars[17] = PhiRec;
+                            }
+                            if(vars[12] == 1) {
+                                vars[18]= ZhRec;
+                                vars[19]= Pt2Rec;
+                                vars[20]= PhiRec;
+                            }
+                            if(vars[12] == 2) {
+                                Zh3_rec = ZhRec;
+                                Pt3_rec = Pt2Rec;
+                                PhiPQ3_rec = PhiRec;
+                            }
+                            vars[12]++;
+                        }
+                        isPion++;
+                    }
+                    tmpCounter++;
+                    tmpEvnt = evnt;
+                    // Go to the next particle
+                    if(i + 1 + tmpCounter > simulTuple->GetEntries() ){ break; }
+                    simulTuple->GetEntry(i + 1 + tmpCounter);
+
+                }
+                // If there is just one detected pion put it first
+                float tmpZh, tmpPt2, tmpPhi;
+                if(int(vars[0]) == 1) {
+                    if(vars[3] == dummyval) {
+                        vars[3] = vars[6];
+                        vars[4] = vars[7];
+                        vars[5] = vars[8];
+                        vars[6] = dummyval;
+                        vars[7] = dummyval;
+                        vars[8] = dummyval;
+                        tmpZh   = vars[18];
+                        tmpPt2  = vars[19];
+                        tmpPhi  = vars[20];
+                        vars[18] = vars[15];
+                        vars[19] = vars[16];
+                        vars[20] = vars[17];
+                        vars[15] = tmpZh;
+                        vars[16] = tmpPt2;
+                        vars[17] = tmpPhi;
+                    } 
+                }
+
+                // If there is not Gen pion set sum variables = dummyval
+                if(vars[0] == 0){
+                    vars[9]  = dummyval;
+                    vars[10] = dummyval;
+                    vars[11] = dummyval;
+                }
+
+                // If there is not Rec pion set sum variables = dummyval
+                if(vars[12] == 0){
+                    vars[21] = dummyval;
+                    vars[22] = dummyval;
+                    vars[23] = dummyval;
+                }
+
+                // If there is one Gen pion set sum variables = val first pion
+                if(vars[0] == 1){
+                    vars[9]  = vars[3];
+                    vars[10] = vars[4];
+                    vars[11] = vars[5];
+                }
+
+
+                // If there is one Rec pion set sum variables = val non null pion
+                if(vars[12] == 1) {
+                    if(vars[15] != dummyval) {
+                        vars[21] = vars[15];
+                        vars[22] = vars[16];
+                        vars[23] = vars[17];  
+                    } else {
+                        vars[21] = vars[18];
+                        vars[22] = vars[19];
+                        vars[23] = vars[20];  
+                    }
+
+                }
+
+
+                if(vars[0] == 2) {
+                    for(int k = 0; k < 2; k++) {
+                        if(ZhMax < vars[3+k*3]) {
+                            MaxIndex = 3 + 3*k;
+                        }
+                    }
+                    vars[9]  = vars[MaxIndex];
+                    vars[10] = vars[MaxIndex+1];
+                    vars[11] = vars[MaxIndex+2]; 	  
+                }
+
+                if(vars[12] == 2) {
+                    for(int k = 0; k < 2; k++) {
+                        if(ZhMax < vars[15+k*3]) {
+                            MaxIndex = 15 + 3*k;
+                        }
+                    }
+                    vars[21] = vars[MaxIndex];
+                    vars[22] = vars[MaxIndex+1];
+                    vars[23] = vars[MaxIndex+2]; 	  
+                }
+
+
+                if(vars[0] == 3) {
+                    for(int k = 0; k < 2; k++) {
+                        if(ZhMax < vars[3+k*3]) {
+                            MaxIndex = 3 + 3*k;
+                        }
+                    }
+                    if(ZhMax < Zh3_gen) {
+                        vars[9]  = Zh3_gen;
+                        vars[10] = Pt3_gen;
+                        vars[11] = PhiPQ3_gen;
+                    } else{
+                        vars[9]  = vars[MaxIndex];
+                        vars[10] = vars[MaxIndex+1];
+                        vars[11] = vars[MaxIndex+2]; 	  
+                    }
+                }
+
+                if(vars[12] == 3) {
+                    for(int k = 0; k < 2; k++) {
+                        if(ZhMax < vars[15+k*3]) {
+                            MaxIndex = 15 + 3*k;
+                        }
+                    }
+                    if(ZhMax < Zh3_gen) {
+                        vars[9]  = Zh3_rec;
+                        vars[10] = Pt3_rec;
+                        vars[11] = PhiPQ3_rec;
+                    } else{
+                        vars[21] = vars[MaxIndex];
+                        vars[22] = vars[MaxIndex+1];
+                        vars[23] = vars[MaxIndex+2]; 	  
+                    }
+                }
+
+                // Add the variables to the tuple
+                // Jump to the next event
+                i += tmpCounter;
+                tmpCounter = 0;
+
+                vars_save[0] = vars[0];
+                vars_save[1] = vars[1];
+                vars_save[2] = vars[2];
+                vars_save[3] = vars[9];
+                vars_save[4] = vars[10];
+                vars_save[5] = vars[11];
+                vars_save[6] = vars[12];
+                vars_save[7] = vars[13];
+                vars_save[8] = vars[14];
+                vars_save[9] = vars[21];
+                vars_save[10] = vars[22];
+                vars_save[11] = vars[23];
+
+                if(isPion > 0) {
+                    outputTuple->Fill(vars_save);
+                }
+
+            } // End part icles loop
+            delete simulTuple;
+            fSource->Close();
+        } // End sim loop
+        std::cout << "Directory " << folder << " checked" << std::endl;
+    } // End folder loop
+
+    // Save the Ntuple
+    TFile *fileOutput= new TFile(Form(dataDirectory + "SimulTupleME_%s.root", targetArr),
+                                "RECREATE");
+    //TFile *fileOutput= new TFile("/home/matias/proyecto/Omnifold/Data/Test.root", "RECREATE");
+    fileOutput->cd();
+    outputTuple->Write();
+    gROOT->cd();
+    fileOutput->Close();
+    t.Print();
     return 0;
-  }
-
-  TStopwatch t;
-
-  // For the Target name use (D,C,Fe,Pb)
-  std::string target = argv[1];
-  // Creating a array of chars instead of a string to use Form method
-  int n = target.length();
-  char targetArr[n + 1];
-  strcpy(targetArr, target.c_str());
-
-  std::cout << "Start" << std::endl;
-
-  TString inputName;
-
-  // Set the variables that we want to save
-  const char* VarList = "Gen:Dec:Q2:Nu:Zh:Pt2:PhiPQ";
-  TNtuple* sumTuple = new TNtuple("ntuple_sim", "", VarList);
-  float ZhMax; 
-  int MaxIndex; 
-
-  for(int folder = 1; folder < 10; folder++) { // Loops in every directory
-    for(int sim = 154; sim < 157; sim++) { // Loops in every simulation of the directory
-      // Set the name of the file where is the data depends on the target and the folder
-      if(targetArr[0] == 'D' ){
-        if(folder < 4) {
-          inputName = Form("/work/mbarrial/out/GetSimpleTuple_HSim/D2_pb%i/prunedD_%i.root",
-			    folder, sim);
-        } else {
-          inputName = Form("/work/mbarrial/out/GetSimpleTuple_HSim/D2_pb%i_yshiftm03/prunedD_%i.root"
-			    , folder, sim);
-        }
-      } else {
-        if(folder < 4) {
-          inputName = Form("/work/mbarrial/out/GetSimpleTuple_HSim/%s%i/pruned%s_%i.root", targetArr,
-			    folder,targetArr,sim);
-        } else {
-          inputName = Form("/work/mbarrial/out/GetSimpleTuple_HSim/%s%i_yshiftm03/pruned%s_%i.root",
-			    targetArr,folder,targetArr,sim);
-        }
-      }
-      //std::cout << "Checking directory " << folder << "  " << sim << std::endl;
-      //inputName = Form("/home/matias/proyecto/Piones/Data/Simul/pruned%s_%i.root",targetArr ,sim);
-      // Open the file and check if it's exist
-      TFile* fSource = new TFile(inputName,"READ");
-      if (fSource->IsZombie()) {
-        fSource->Close();
-        continue;
-      }
-      // Open the tuple and check if it's exist
-      TNtuple* simulTuple = (TNtuple*)fSource->Get("ntuple_sim");
-      if(simulTuple == NULL) {
-        delete simulTuple;
-        fSource->Close();
-        continue;
-      }
-
-      gROOT->cd();
-
-      float *vars = new Float_t[7];
-      float mcPid, pid, evnt, Q2Evnt, NuEvnt, deltaZEvnt;
-
-      // Read the necesary variables
-      simulTuple->SetBranchAddress("evnt",&evnt);
-      simulTuple->SetBranchAddress("mc_pid",&mcPid);
-      simulTuple->SetBranchAddress("pid",&pid);
-      simulTuple->SetBranchAddress("mc_Q2",&Q2Evnt);
-      simulTuple->SetBranchAddress("mc_Nu",&NuEvnt);
-      simulTuple->SetBranchAddress("mc_Zh",&vars[4]);
-      simulTuple->SetBranchAddress("mc_Pt2",&vars[5]);
-      simulTuple->SetBranchAddress("mc_PhiPQ",&vars[6]);
-      simulTuple->SetBranchAddress("deltaZ",&deltaZEvnt);
-
-      // Create the variables to use inside of the for loops
-      vars[0] = 0; // Count how many pions were generated in the event
-      vars[1] = 0; // Count how many pions were detected in the event
-      int tmpCounter = 0;
-      float tmpEvnt;
-      float tmpZh[5], tmpPt[5], tmpPhi[5] ;
-      int isPion;
-      for(int i = 0; i < simulTuple->GetEntries(); i++) { // Loops in every generated particle
-	isPion = 0;
-        simulTuple->GetEntry(i);
-        vars[2] = Q2Evnt;
-        vars[3] = NuEvnt;
-        // Check the bin of Q2 for the event
-        // Check if the generated paricle is a pion+
-	if(mcPid == 211 || (pid == 211 && TMath::Abs(deltaZEvnt) < 3.)) {
-	  isPion++; 
-	  if(mcPid == 211 ){
-	    // Save the angle PhiPQ,Zh and Pt if it's a pion
-	    tmpZh[0]  = vars[4];
-	    tmpPt[0]  = vars[5];
-	    tmpPhi[0] = vars[6];
-	    vars[0]++;
-	  }
-	  // Check if the detected paricle is a pion+
-	  if(pid == 211 ) { vars[1]++; }
-	}
-        tmpEvnt = evnt;
-        simulTuple->GetEntry(i + 1);
-        // Check if the next particle cames from the same event
-        while(tmpEvnt == evnt) { // Check all the paricles in the event
-	  if(mcPid == 211 || (pid == 211 && TMath::Abs(deltaZEvnt) < 3.)) {
-	    isPion++;
-	    if(mcPid == 211) { // If the generated paricle is a pi+
-	      // Save the angle PhiPQ, Zh and Pt of every pion in the event
-	      tmpZh[(int)vars[0]]  = vars[4];
-	      tmpPt[(int)vars[0]]  = vars[5];
-	      tmpPhi[(int)vars[0]] = vars[6];
-	      vars[0]++;
-	    }
-	    if(pid == 211) { vars[1]++; }
-	  }
-          tmpCounter++;
-          tmpEvnt = evnt;
-          // Go to the next particle
-          if(i + 1 + tmpCounter > simulTuple->GetEntries() ){ break; }
-          simulTuple->GetEntry(i + 1 + tmpCounter);
-        }
-        vars[4] = 0;
-	ZhMax = 0;
-	MaxIndex = -1;
-        for(int k = 0; k < (int)vars[0]; k++) {
-	  ZhMax = tmpZh[k];
-	  MaxIndex = -1;
-        }
-	vars[2] = tmpZh[MaxIndex];
-	vars[3] = tmpPt[MaxIndex];
-	vars[4] = tmpPhi[MaxIndex];
-        // Save the Pt2 of the sum vector
-        // Add the variables to the tuple
-        if(isPion != 0) {
-	  sumTuple->Fill(vars);
-        }
-	// Reset the gen and dec counters
-        vars[0] = 0;
-        vars[1] = 0;
-        // Jump to the next event
-        i += tmpCounter;
-        tmpCounter = 0;
-      } // End particles loop
-      delete simulTuple;
-      fSource->Close();
-    } // End sim loop
-    std::cout << "Directory " << folder << " checked" << std::endl;
-  } // End folder loop
-
-  // Save the Ntuple
-  TFile *fileOutput= new TFile(Form("/work/mbarrial/Data/MoreEnergySimul_%s.root", targetArr),
-				    "RECREATE");
-  //TFile *fileOutput= new TFile("hola.root", "RECREATE");
-  fileOutput->cd();
-  sumTuple->Write();
-  gROOT->cd();
-  fileOutput->Close();
-  t.Print();
 
 }
+

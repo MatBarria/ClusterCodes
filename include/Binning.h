@@ -1,8 +1,7 @@
 #include "TString.h"
 // Directories to read and save the data and plots ,normaly saves as NuQ2Yo-?Phi-?Pt-?Z/ with ? the number of bins
-const TString inputDirectory  = "/home/matias/proyecto/Pt2Broadening_multi-pion/Data/Final/";
-const TString plotDirectory   = "/home/matias/proyecto/Pt2Broadening_multi-pion/Plots/Final/";
-const TString outputDirectory = "/home/matias/proyecto/Pt2Broadening_multi-pion/Data/Final/";
+const TString dataDirectory  = "/work/mbarrial/Data/";
+const TString inputDirectory  = "/work/mbarrial/Data/";
 
 const int UseCutOff = 3; // Select 1 Use the Cutoff and the interpolation
 			// Select 2 Use the Cutoff 
