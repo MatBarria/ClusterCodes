@@ -18,8 +18,8 @@ int main(int argc, char* argv[]) {
     } 
     TStopwatch t;
 
-    TString DataDirectory = "/work/mbarrial/data/";
-    TString outputDirectory = "/work/mbarrial/data/ME/";
+    TString DataDirectory = "/work/mbarrial/Data/";
+    TString outputDirectory = "/work/mbarrial/Data/ME/";
 
     std::cout << "Start" << std::endl;
 
