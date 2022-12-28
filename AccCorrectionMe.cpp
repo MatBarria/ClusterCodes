@@ -40,7 +40,7 @@ int main(int argc, char* argv[]) {
         for(int i = 0; i < n; i++){
             solidTarget[i] = targetArr[i+1];
         }
-        fileDataName = Form(dataDirectory + "MoreEnergy_$s.root", solidTarget);
+        fileDataName = Form(dataDirectory + "MoreEnergy_%s.root", solidTarget);
     } else{
         m = n+1;
         //fileDataName = Form("/eos/user/m/mbarrial/Data/VecSum_%s.root", targetArr);
