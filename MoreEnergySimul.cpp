@@ -163,7 +163,8 @@ int main(int argc, char* argv[]) {
                 simulTuple->GetEntry(i + 1);
                 // Check if the next particle cames from the same event
                 while(tmpEvnt == evnt) { // Check all the paricles in the event
-                    if((pidGen == 211 || (pidRec == 211 && TMath::Abs(deltaZ) < 3)) && (isPion < 2)) {
+                    if((pidGen == 211 || (pidRec == 211 && TMath::Abs(deltaZ) < 3))
+                        && (isPion < 2)) {
                         if(pidGen == 211) {
                             // Save the angle PhiPQ,Zh and Pt if it's a pion
                             vars[0]++;
@@ -191,7 +192,8 @@ int main(int argc, char* argv[]) {
                             vars[isPion*3+17] = dummyval;
                         }
                         isPion++;
-                    } else if((pidGen == 211 || (pidRec == 211 && TMath::Abs(deltaZ) < 3)) && (isPion = 2)) {
+                    } else if((pidGen == 211 || (pidRec == 211 && TMath::Abs(deltaZ) < 3))
+                                && (isPion = 2)) {
                         if(pidGen == 211) {
                             // Save the angle PhiPQ,Zh and Pt if it's a pion
                             if(vars[0] == 0) {

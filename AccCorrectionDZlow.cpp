@@ -139,9 +139,9 @@ int main(int argc, char* argv[]) {
             // Select the Pt2 bin
             Pt2Cut      = Form("Pt2>%f&&Pt2<%f", Pt2_BINS[Pt2Counter], Pt2_BINS[Pt2Counter+1]);
             Pt2Cut_gen  = Form("Pt2_gen>%f&&Pt2_gen<%f", Pt2_BINS[Pt2Counter],
-			       Pt2_BINS[Pt2Counter+1]);
+			                    Pt2_BINS[Pt2Counter+1]);
             Pt2Cut_rec  = Form("Pt2_rec>%f&&Pt2_rec<%f", Pt2_BINS[Pt2Counter], 
-				Pt2_BINS[Pt2Counter+1]);
+				                Pt2_BINS[Pt2Counter+1]);
 
             ntupleData->Project("Data", "PhiPQ", Pt2Cut);
             if(EmptyHist(histData) == 1){ continue; } // If there isn't any event in data skip this bin
