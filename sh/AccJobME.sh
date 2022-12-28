@@ -11,7 +11,7 @@ LOGSDIR=/work/mbarrial/ClusterCodes/logs
 mkdir -p ${JOBDIR} ${LOGSDIR} # just in case
 
 # setting jobname
-jobname="AccME_${TARNAME}_${Q2BIN}_${NUBIN}"
+jobname="AccME_${TARNAME}_${w}_${Q2BIN}_${NUBIN}"
 jobfile="${JOBDIR}/${jobname}.sh"
 
 echo ${jobname}

@@ -18,8 +18,8 @@ int main(int argc, char* argv[]) {
     } 
     TStopwatch t;
 
-    TString DataDirectory = "/work/mbarrial/Data/";
-    TString outputDirectory = "/work/mbarrial/Data/ME/";
+    //TString dataDirectory = "/work/mbarrial/Data/";
+    //TString outputDirectory = "/work/mbarrial/Data/ME/";
 
     std::cout << "Start" << std::endl;
 
@@ -40,11 +40,11 @@ int main(int argc, char* argv[]) {
         for(int i = 0; i < n; i++){
             solidTarget[i] = targetArr[i+1];
         }
-        fileDataName = Form(DataDirectory + "MoreEnergy_$s.root", solidTarget);
+        fileDataName = Form(dataDirectory + "MoreEnergy_$s.root", solidTarget);
     } else{
         m = n+1;
         //fileDataName = Form("/eos/user/m/mbarrial/Data/VecSum_%s.root", targetArr);
-        fileDataName = Form(DataDirectory + "MoreEnergy_%s.root", targetArr);
+        fileDataName = Form(dataDirectory + "MoreEnergy_%s.root", targetArr);
     }
 
     // Select the target of the simultion
@@ -59,7 +59,7 @@ int main(int argc, char* argv[]) {
     }
     // Open the input and output files
     TFile* fileData   = new TFile(fileDataName,"READ");
-    TFile* fileSimul  = new TFile(DataDirectory + Form("SimulTuple_%s.root", simulTarget),
+    TFile* fileSimul  = new TFile(dataDirectory + Form("SimulTupleME_%s.root", simulTarget),
                                                         "READ");
     gROOT->cd();
     TFile* fileOutput = new TFile(outputDirectory + Form("corr_data_Phi_%i%i.root", Q2Bin,
@@ -143,9 +143,12 @@ int main(int argc, char* argv[]) {
                     TEventList* evntSimul_gen = (TEventList*) gDirectory->Get("listSimul_gen");
                     TEventList* evntSimul_rec = (TEventList*) gDirectory->Get("listSimul_rec");
 
+                    std::cout << "Test 3" << std::endl;
                     ntupleData->SetEventList(evntData);
                     ntupleSimul_gen->SetEventList(evntSimul_gen);
                     ntupleSimul_rec->SetEventList(evntSimul_rec);
+
+                    std::cout << "Test 5" << std::endl;
 
                     for(int Pt2Counter = 0; Pt2Counter < N_Pt2; Pt2Counter++) { // Loops in every Pt2 bin
 
