@@ -3,7 +3,7 @@ BINDIR=${MAINDIR}/bin
 
 mkdir -p ${BINDIR}
 
-g++ -Wall -fpic  `root-config --cflags` duplicateSimulTuple.cpp -o ./bin/duplicateSimulTuple `root-config --glibs`
+g++ -Wall -fpic  `root-config --cflags` ../duplicateSimulTuple.cpp -o ../bin/duplicateSimulTuple `root-config --glibs`
 
 bash DuplicateME.sh D
 bash DuplicateME.sh C
