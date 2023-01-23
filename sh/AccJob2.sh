@@ -11,7 +11,7 @@ LOGSDIR=/work/mbarrial/ClusterCodes/logs
 mkdir -p ${JOBDIR} ${LOGSDIR} # just in case
 
 # setting jobname
-jobname="AccME_${TARNAME}_${Q2BIN}_${NUBIN}"
+jobname="Acc2_${TARNAME}_${Q2BIN}_${NUBIN}"
 jobfile="${JOBDIR}/${jobname}.sh"
 
 echo ${jobname}
@@ -25,6 +25,6 @@ echo "#SBATCH --mem=1GB"                                          >> ${jobfile}
 echo ""                                                           >> ${jobfile}
 echo "source ${HOME}/.bashrc"                                     >> ${jobfile}
 echo "cd ${JOBDIR}"                                               >> ${jobfile}
-echo "./ACCME ${TARNAME} ${Q2BIN} ${NUBIN}"                       >> ${jobfile}
+echo "../bin/AccCorrection2 ${TARNAME} ${Q2BIN} ${NUBIN}"                       >> ${jobfile}
 echo "Submitting job: ${jobfile}"
 sbatch ${jobfile} # submit job!
