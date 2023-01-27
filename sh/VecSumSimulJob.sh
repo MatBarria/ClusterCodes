@@ -15,8 +15,8 @@ echo ${jobname}
 
 echo "#!/bin/bash"                                                 > ${jobfile}
 echo "#SBATCH -J ${jobname}"                                      >> ${jobfile}
-echo "#SBATCH -o ${JOBDIR}/${jobname}.out"                        >> ${jobfile}
-echo "#SBATCH -e ${JOBDIR}/${jobname}.err"                        >> ${jobfile}
+echo "#SBATCH -o ${LOGSDIR}/${jobname}.out"                        >> ${jobfile}
+echo "#SBATCH -e ${LOGSDIR}/${jobname}.err"                        >> ${jobfile}
 echo "#SBATCH --time=4:00:00"                                     >> ${jobfile}
 echo "#SBATCH --mem=1GB"                                          >> ${jobfile}
 echo ""                                                           >> ${jobfile}

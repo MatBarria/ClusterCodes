@@ -63,7 +63,7 @@ int main(int argc, char* argv[]) {
             //std::cout << "Checking directory " << folder << "  " << sim << std::endl;
             //inputName = Form("/home/matias/proyecto/Piones/Data/Simul/pruned%s_%i.root",targetArr ,sim);
             // Open the file and check if it's exist
-            TFile* fSource = new TFile(inputName,"READ");
+            TFile* fSource = new TFile(SimulDirectory + inputName, "READ");
             if (fSource->IsZombie()) {
                 fSource->Close();
                 continue;
