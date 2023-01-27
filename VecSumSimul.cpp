@@ -1,7 +1,7 @@
 // The code run over the simulation generated with the code GetSimpleTuple
 // https://github.com/utfsm-eg2-data-analysis/GetSimpleTuple
 // It can be compile with
-// g++ -Wall -fPIC  `root-config --cflags` MoreEnergySimul.cpp -o ./bin/MoreEnergySimul `root-config --glibs`
+// g++ -Wall -fPIC  `root-config --cflags` VecSumSimul.cpp -o ./bin/VecSumSimul `root-config --glibs`
 // For the target name use (D,C,Fe,Pb)
 
 #include <iostream>
@@ -14,9 +14,6 @@
 #include "TStopwatch.h"
 #include "TROOT.h"
 
-TString simulDirectory = "/work/mbarrial/out/GetSimpleTuple_HSim/";
-TString dataDirectory = "/work/mbarrial/Data";
-
 int main(int argc, char* argv[]) {
 
     if(argc != 2) {
@@ -24,7 +21,7 @@ int main(int argc, char* argv[]) {
         return 0;
     }
 
-    TStopwatch t;
+    TStopwatch	 t;
 
     // For the Target name use (D,C,Fe,Pb)
     std::string target = argv[1];
@@ -35,33 +32,32 @@ int main(int argc, char* argv[]) {
     int dummyval = -999; // Value for the variables of pions that was not Gen/Rec  
 
     std::cout << "Start" << std::endl;
+
     TString inputName;
-    int ZhMax, MaxIndex;
+    float DZcut = 3.0;
+    TString SimulDirectory = "/work/mbarrial/out/GetSimpleTuple_HSim/";
+
     // Set the variables that we want to save
-    const char* VarList =
-        "Gen:Q2_gen:Nu_gen:Zh_gen:Pt2_gen:PhiPQ_gen:Rec:Q2_rec:Nu_rec:Zh_rec:Pt2_rec:PhiPQ_rec";
+    const char* VarList = "Gen:Q2_gen:Nu_gen:Zh_gen:Pt2_gen:PhiPQ_gen:Rec:Q2_rec:Nu_rec:Zh_rec:Pt2_rec:PhiPQ_rec";
     float *vars = new Float_t[24];
     float *vars_save = new Float_t[12];
-
     TNtuple* outputTuple = new TNtuple("ntuple_sim", "", VarList);
-
     for(int folder = 1; folder < 10; folder++) { // Loops in every directory
         for(int sim = 1; sim < 500; sim++) { // Loops in every simulation of the directory
                                              // Set the name of the file where is the data depends on the target and the folder
             if(targetArr[0] == 'D' ){
                 if(folder < 4) {
-                    inputName = Form(simulDirectory + "D2_pb%i/prunedD_%i.root", folder, sim);
+                    inputName = Form("D2_pb%i/prunedD_%i.root", folder, sim);
                 } else {
-                    inputName = Form(simulDirectory + "D2_pb%i_yshiftm03/prunedD_%i.root", 
-                                    folder, sim);
+                    inputName = Form("D2_pb%i_yshiftm03/prunedD_%i.root", folder, sim);
                 }
             } else {
                 if(folder < 4) {
-                    inputName = Form(simulDirectory + "%s%i/pruned%s_%i.root", targetArr,
-                                    folder, targetArr, sim);
+                    inputName = Form("%s%i/pruned%s_%i.root", targetArr, folder, 
+                                    targetArr, sim);
                 } else {
-                    inputName = Form(simulDirectory + "%s%i_yshiftm03/pruned%s_%i.root",
-                            targetArr, folder, targetArr, sim);
+                    inputName = Form("%s%i_yshiftm03/pruned%s_%i.root", targetArr, folder,
+                            targetArr, sim);
                 }
             }
             //std::cout << "Checking directory " << folder << "  " << sim << std::endl;
@@ -104,18 +100,13 @@ int main(int argc, char* argv[]) {
             simulTuple->SetBranchAddress("PhiPQ",&PhiRec);
             simulTuple->SetBranchAddress("deltaZ",&deltaZ);
             // Create the variables to use inside of the for loops
-            //vars[0] = 0; // Count how many pions were generated in the event
-            //vars[1] = 0; // Count how many pions were detected in the event
             int tmpCounter = 0;
-            //float tmpEvnt;
-            //float tmpZh[5], tmpPt[5], tmpPhi[5] ;
             int isPion;
 
-            for(int i = 0; i < simulTuple->GetEntries(); i++) { // Loops generated particles
-                isPion = 0; // Count if there is a gen or rec pion in the evnt 
+            for(int i = 0; i < simulTuple->GetEntries(); i++) { // Loops in every generated particle
+                isPion = 0; // If is diferent than 0 there is a generated or reconstructed pion
                 simulTuple->GetEntry(i);
-                ZhMax = 0; 
-                MaxIndex = -1;
+
                 // Set all varibles at dummyVal at start to avoid errors
                 for(int j = 0; j < 24; j++) {
                     vars[j] = dummyval;
@@ -132,8 +123,8 @@ int main(int argc, char* argv[]) {
                 PhiPQ3_rec = 0;
 
 
-                // Check if there is a Gen or Rec pion in th
-                if(pidGen == 211 || (pidRec == 211 && TMath::Abs(deltaZ) < 3)) {
+                // Check if the generated paricle is a pion+
+                if(pidGen == 211 || (pidRec == 211 && TMath::Abs(deltaZ) < DZcut)) {
                     isPion++;
                     if(pidGen == 211) {
                         // Save the angle PhiPQ,Zh and Pt if it's a pion
@@ -163,8 +154,8 @@ int main(int argc, char* argv[]) {
                 simulTuple->GetEntry(i + 1);
                 // Check if the next particle cames from the same event
                 while(tmpEvnt == evnt) { // Check all the paricles in the event
-                    if((pidGen == 211 || (pidRec == 211 && TMath::Abs(deltaZ) < 3))
-                        && (isPion < 2)) {
+                    if((pidGen == 211 || (pidRec == 211 && TMath::Abs(deltaZ) < DZcut)) 
+                            && (isPion < 2)) {
                         if(pidGen == 211) {
                             // Save the angle PhiPQ,Zh and Pt if it's a pion
                             vars[0]++;
@@ -192,8 +183,8 @@ int main(int argc, char* argv[]) {
                             vars[isPion*3+17] = dummyval;
                         }
                         isPion++;
-                    } else if((pidGen == 211 || (pidRec == 211 && TMath::Abs(deltaZ) < 3))
-                                && (isPion = 2)) {
+                    } else if((pidGen == 211 || (pidRec == 211 && TMath::Abs(deltaZ) < DZcut))
+                            && (isPion = 2)) {
                         if(pidGen == 211) {
                             // Save the angle PhiPQ,Zh and Pt if it's a pion
                             if(vars[0] == 0) {
@@ -301,60 +292,65 @@ int main(int argc, char* argv[]) {
 
 
                 if(vars[0] == 2) {
+                    TVector2* vec = new TVector2(0,0);
                     for(int k = 0; k < 2; k++) {
-                        if(ZhMax < vars[3+k*3]) {
-                            MaxIndex = 3 + 3*k;
-                        }
+                        // Calculate de tranvers momentum vector
+                        TVector2 *tmpVec = new TVector2(TMath::Sqrt(vars[k*3+4])*TMath::Cos((vars[k*3+5] + 180)*TMath::DegToRad()), TMath::Sqrt(vars[k*3+4])*TMath::Sin((vars[k*3+5] + 180)*TMath::DegToRad()));
+                        // Sum the vector and save the sum of Zh
+                        *vec += *tmpVec;
+                        delete tmpVec;
                     }
-                    vars[9]  = vars[MaxIndex];
-                    vars[10] = vars[MaxIndex+1];
-                    vars[11] = vars[MaxIndex+2]; 	  
+                    vars[9]  = vars[3]+vars[6];
+                    vars[10] = std::pow(vec->Mod(),2);
+                    vars[11] = vec->Phi()*TMath::RadToDeg()-180;
+                    delete vec;
                 }
-
                 if(vars[12] == 2) {
+                    TVector2* vec = new TVector2(0,0);
                     for(int k = 0; k < 2; k++) {
-                        if(ZhMax < vars[15+k*3]) {
-                            MaxIndex = 15 + 3*k;
-                        }
+                        // Calculate de tranvers momentum vector
+                        TVector2 *tmpVec = new TVector2(TMath::Sqrt(vars[k*3+16])*TMath::Cos((vars[k*3+17] + 180)*TMath::DegToRad()), TMath::Sqrt(vars[k*3+16])*TMath::Sin((vars[k*3+17]+ 180)*TMath::DegToRad()));
+                        // Sum the vector and save the sum of Zh
+                        *vec += *tmpVec;
+                        delete tmpVec;
                     }
-                    vars[21] = vars[MaxIndex];
-                    vars[22] = vars[MaxIndex+1];
-                    vars[23] = vars[MaxIndex+2]; 	  
+                    vars[21] = vars[15]+vars[18];
+                    vars[22] = std::pow(vec->Mod(),2);
+                    vars[23] = vec->Phi()*TMath::RadToDeg()-180;
+                    delete vec;
                 }
 
 
                 if(vars[0] == 3) {
+                    TVector2* vec = new TVector2(0,0);
                     for(int k = 0; k < 2; k++) {
-                        if(ZhMax < vars[3+k*3]) {
-                            MaxIndex = 3 + 3*k;
-                        }
+                        // Calculate de tranvers momentum vector
+                        TVector2 *tmpVec = new TVector2(TMath::Sqrt(vars[k*3+4])*TMath::Cos((vars[k*3+5] + 180)*TMath::DegToRad()), TMath::Sqrt(vars[k*3+4])*TMath::Sin((vars[k*3+5] + 180)*TMath::DegToRad()));
+                        // Sum the vector and save the sum of Zh
+                        *vec += *tmpVec;
+                        delete tmpVec;
                     }
-                    if(ZhMax < Zh3_gen) {
-                        vars[9]  = Zh3_gen;
-                        vars[10] = Pt3_gen;
-                        vars[11] = PhiPQ3_gen;
-                    } else{
-                        vars[9]  = vars[MaxIndex];
-                        vars[10] = vars[MaxIndex+1];
-                        vars[11] = vars[MaxIndex+2]; 	  
-                    }
+                    TVector2 *tmpVec = new TVector2(TMath::Sqrt(Pt3_gen)*TMath::Cos((PhiPQ3_gen + 180)*TMath::DegToRad()), TMath::Sqrt(Pt3_gen)*TMath::Sin((PhiPQ3_gen + 180)*TMath::DegToRad()));
+                    *vec += *tmpVec;
+                    delete tmpVec;
+                    vars[9]  = vars[3] + vars[6] + Zh3_gen;
+                    vars[10] = std::pow(vec->Mod(),2);
+                    vars[11] = vec->Phi()*TMath::RadToDeg()-180;
+                    delete vec;
                 }
-
                 if(vars[12] == 3) {
+                    TVector2* vec = new TVector2(0,0);
                     for(int k = 0; k < 2; k++) {
-                        if(ZhMax < vars[15+k*3]) {
-                            MaxIndex = 15 + 3*k;
-                        }
+                        // Calculate de tranvers momentum vector
+                        TVector2 *tmpVec = new TVector2(TMath::Sqrt(Pt3_rec)*TMath::Cos((PhiPQ3_rec + 180)*TMath::DegToRad()), TMath::Sqrt(Pt3_rec)*TMath::Sin((PhiPQ3_rec + 180)*TMath::DegToRad()));
+                        // Sum the vector and save the sum of Zh
+                        *vec += *tmpVec;
+                        delete tmpVec;
                     }
-                    if(ZhMax < Zh3_gen) {
-                        vars[9]  = Zh3_rec;
-                        vars[10] = Pt3_rec;
-                        vars[11] = PhiPQ3_rec;
-                    } else{
-                        vars[21] = vars[MaxIndex];
-                        vars[22] = vars[MaxIndex+1];
-                        vars[23] = vars[MaxIndex+2]; 	  
-                    }
+                    vars[21] = vars[15] + vars[18] + Zh3_rec;
+                    vars[22] = std::pow(vec->Mod(),2);
+                    vars[23] = vec->Phi()*TMath::RadToDeg()-180;
+                    delete vec;
                 }
 
                 // Add the variables to the tuple
@@ -387,9 +383,7 @@ int main(int argc, char* argv[]) {
     } // End folder loop
 
     // Save the Ntuple
-    TFile *fileOutput= new TFile(Form(dataDirectory + "SimulTupleME_%s.root", targetArr),
-                                "RECREATE");
-    //TFile *fileOutput= new TFile("/home/matias/proyecto/Omnifold/Data/Test.root", "RECREATE");
+    TFile *fileOutput = new TFile(Form("/work/mbarrial/Data/SimulTuple_%s.root", targetArr), "RECREATE");
     fileOutput->cd();
     outputTuple->Write();
     gROOT->cd();

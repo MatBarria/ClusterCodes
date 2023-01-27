@@ -1,10 +1,9 @@
 TARNAME="$@"
 
 # set dirs
-MAINDIR=/eos/user/${USER:0:1}/${USER}/Pt2Broadening_multi-pion              # dir of the program
-JOBDIR=/eos/user/${USER:0:1}/${USER}/Pt2Broadening_multi-pion/bin          # dir to store logs and job scripts
-#MAINDIR=/home/matias/proyecto/Pt2Broadening_multi-pion              # dir of the program
-#JOBDIR=/home/matias/proyecto/Pt2Broadening_multi-pion/jobs          # dir to store logs and job scripts
+
+JOBDIR=/work/mbarrial/ClusterCodes/bin          # dir to store logs and job scripts
+LOGSDIR=/work/mbarrial/ClusterCodes/logs
 
 mkdir -p ${JOBDIR} # just in case
 
@@ -23,6 +22,6 @@ echo "#SBATCH --mem=1GB"                                          >> ${jobfile}
 echo ""                                                           >> ${jobfile}
 echo "source ${HOME}/.bashrc"                                     >> ${jobfile}
 echo "cd ${JOBDIR}"                                               >> ${jobfile}
-echo "./VecSumSimulDeltaZ ${TARNAME}"                             >> ${jobfile}
+echo "./VecSumSimul ${TARNAME}"                             >> ${jobfile}
 echo "Submitting job: ${jobfile}"
 sbatch ${jobfile} # submit job!

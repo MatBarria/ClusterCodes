@@ -1,7 +1,10 @@
-MAINDIR=/eos/user/${USER:0:1}/${USER}/Pt2Broadening_multi-pion
+MAINDIR=/work/mbarrial/ClusterCodes
 BINDIR=${MAINDIR}/bin
+SHDIR=${MAINDIR}/sh
 
 mkdir -p ${BINDIR}
+
+cd ${MAINDIR}
 
 g++ -Wall -fPIC  `root-config --cflags` ${MAINDIR}/VecSumSimul.cpp -o ${BINDIR}/VecSumSimul  `root-config --glibs`
 
