@@ -4,8 +4,6 @@ SHDIR=${MAINDIR}/sh
 
 mkdir -p ${BINDIR}
 
-cd ${MAINDIR}
-
 g++ -Wall -fPIC  `root-config --cflags` ${MAINDIR}/VecSumSimulDZHigh.cpp -o ${BINDIR}/VecSumSimul  `root-config --glibs`
 
 bash VecSumSimulJob.sh D
