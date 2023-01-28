@@ -5,7 +5,7 @@ TARNAME="$@"
 JOBDIR=/work/mbarrial/ClusterCodes/bin          # dir to store logs and job scripts
 LOGSDIR=/work/mbarrial/ClusterCodes/logs
 
-mkdir -p ${JOBDIR} # just in case
+mkdir -p ${JOBDIR} ${LOGSDIR} # just in case
 
 # setting jobname
 jobname="VecSumSim_${TARNAME}"

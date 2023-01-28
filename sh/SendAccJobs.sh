@@ -1,13 +1,11 @@
 #MAINDIR=/work/mbarrial/Pt2Broadening_multi-pion
-MAINDIR=/home/matias/proyecto/Pt2Broadening_multi-pion
+MAINDIR=/work/mbarrial/ClusterCodes
 BINDIR=${MAINDIR}/bin
 SHDIR=${MAINDIR}/sh
 
 mkdir -p ${BINDIR}
 
-cd ${MAINDIR}
-
-g++ -Wall -fPIC -I./include `root-config --cflags` AccCorrection3.cpp -o ./bin/AccCorrection3  `root-config --glibs` ./include/Acc.h
+g++ -Wall -fPIC -I${MAINDIR}/include `root-config --cflags` ${MAINDIR}/AccCorrection.cpp -o ${BINDIR}/AccCorrection  `root-config --glibs` ${MAINDIR}/Acc.h
 
 
 cd ${SHDIR}

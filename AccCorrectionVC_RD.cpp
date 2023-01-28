@@ -17,6 +17,10 @@ int main(int argc, char* argv[]) {
         return 1;
     } 
     TStopwatch t;
+    
+    TString systematic = "VC_RD"
+
+    outputDirectory = outputDirectory + "Systematic/" + systematic + "/";
 
     std::cout << "Start" << std::endl;
 
@@ -58,7 +62,8 @@ int main(int argc, char* argv[]) {
     TFile* fileSimul  = new TFile(Form(dataDirectory + "VecSumSimul_%s.root", simulTarget),
             "READ");
     TFile* fileOutput = new TFile(outputDirectory + 
-            Form("corr_data_Phi_%i%i_%s.root", Q2Bin, NuBin, targetArr), "RECREATE");
+                             Form("corr_data_Phi_%i%i_%s.root", 
+                                  Q2Bin, NuBin, targetArr), "RECREATE");
     gROOT->cd();
 
     // Create some variables to use inside the for loops
@@ -68,8 +73,8 @@ int main(int argc, char* argv[]) {
     TCut Q2Cut_rec, NuCut_rec, ZhCut_rec, Pt2Cut_rec, cutsSimul_rec, RecCut;
     TCut YCCut = "TMath::Abs(YC)<1.4";
     // Select liquid or solid target
-    if(targetArr[0] == 'D') { VCData  = "VC_TM == 1.";}
-    else {VCData  = "VC_TM == 2.";}
+    if(targetArr[0] == 'D') { VCData  = "VC_RD == 1.";}
+    else {VCData  = "VC_RD == 2.";}
     std::cout << Form("Simul target %s, Target %s", simulTarget, targetArr) << " and " << VCData << std::endl;
 
     // Create all the necessary histograms

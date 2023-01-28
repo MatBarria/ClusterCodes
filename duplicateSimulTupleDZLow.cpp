@@ -29,7 +29,7 @@ int main(int argc, char* argv[]) {
     const TString dataDirectory  = "/work/mbarrial/Data/";
     const TString inputDirectory  = "/work/mbarrial/Data/";
     const TString outputDirectory = "/work/mbarrial/Data/";
-    TFile *simFile = new TFile(Form(dataDirectory + "SimulTuple_%s.root", targetArr), 
+    TFile *simFile = new TFile(Form(dataDirectory + "SimulTupleDZLow_%s.root", targetArr), 
                                     "READ");
 
     const char* VarListGen = "Gen:Rec:Q2_gen:Nu_gen:Zh_gen:Pt2_gen:PhiPQ_gen";
@@ -54,7 +54,7 @@ int main(int argc, char* argv[]) {
     simulTuple->SetBranchAddress("Pt2_rec"   , &varsRec[5]);
     simulTuple->SetBranchAddress("PhiPQ_rec" , &varsRec[6]);
 
-    TFile *outputFile = new TFile(dataDirectory + Form("VecSumSimul_%s.root", targetArr),
+    TFile *outputFile = new TFile(dataDirectory + Form("VecSumSimulDZLow_%s.root", targetArr),
                                     "RECREATE");
     gROOT->cd();
     TNtuple *genTuple = new TNtuple("ntuple_sim_gen", "", VarListGen);
