@@ -5,7 +5,7 @@ SHDIR=${MAINDIR}/sh
 
 mkdir -p ${BINDIR}
 
-g++ -Wall -fPIC -I${MAINDIR}/include `root-config --cflags` ${MAINDIR}/AccCorrectionDZHigh.cpp -o ${BINDIR}/AccCorrection  `root-config --glibs` ${MAINDIR}/Acc.h
+g++ -Wall -fPIC -I${MAINDIR}/include `root-config --cflags` ${MAINDIR}/AccCorrectionDZHigh.cpp -o ${BINDIR}/AccCorrection  `root-config --glibs` ${MAINDIR}/include/Acc.h
 
 
 for i in  0 1 2
