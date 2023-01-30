@@ -44,7 +44,7 @@ int main(int argc, char* argv[]) {
         fileDataName = Form(dataDirectory + "VecSum_%s.root", solidTarget);
     } else{
         m = n+1;
-        fileDataName = Form(DataDirectory + "VecSum_%s.root", targetArr);
+        fileDataName = Form(dataDirectory + "VecSum_%s.root", targetArr);
     }
 
     // Select the target of the simultion

@@ -44,7 +44,7 @@ int main(int argc, char* argv[]) {
         fileDataName = Form(dataDirectory + "VecSum" + systematic + "_%s.root", solidTarget);
     } else{
         m = n+1;
-        fileDataName = Form(DataDirectory + "VecSum" + systematic "_%s.root", targetArr);
+        fileDataName = Form(dataDirectory + "VecSum" + systematic "_%s.root", targetArr);
     }
 
     // Select the target of the simultion
@@ -59,11 +59,9 @@ int main(int argc, char* argv[]) {
     }
     // Open the input and output files
     TFile* fileData   = new TFile(fileDataName,"READ");
-    TFile* fileSimul  = new TFile(Form(dataDirectory + "VecSumSimul" + systematic + 
-                                        "_%s.root", simulTarget),
-            "READ");
-    TFile* fileOutput = new TFile(outputDirectory + 
-                             Form("corr_data_Phi_%i%i_%s.root", 
+    TFile* fileSimul  = new TFile(Form(dataDirectory + "VecSumSimul" + systematic + "_%s.root",
+                                        simulTarget), "READ");
+    TFile* fileOutput = new TFile(outputDirectory + Form("corr_data_Phi_%i%i_%s.root", 
                                   Q2Bin, NuBin, targetArr), "RECREATE");
     gROOT->cd();
 

@@ -5,7 +5,7 @@
 // For simultion use the tuple generate by the code VecSumSimul.cpp
 // For data the tuple generate by the code VecSum.cpp
 // It can be compile with
-// g++ -Wall -fPIC -I./include `root-config --cflags` AccCorrection3.cpp -o ./bin/AccCorrection3  `root-config --glibs` ./include/Acc.h
+// g++ -Wall -fPIC -I./include `root-config --cflags` AccCorrection.cpp -o ./bin/AccCorrection `root-config --glibs` ./include/Acc.h
 // For the target name use (C,Fe,Pb) for the solids targets and (DC,DFe,DPb) for the liquid target
 
 #include "Acc.h"
@@ -40,7 +40,7 @@ int main(int argc, char* argv[]) {
         fileDataName = Form(dataDirectory + "VecSum_%s.root", solidTarget);
     } else{
         m = n+1;
-        fileDataName = Form(DataDirectory + "VecSum_%s.root", targetArr);
+        fileDataName = Form(dataDirectory + "VecSum_%s.root", targetArr);
     }
 
     // Select the target of the simultion
