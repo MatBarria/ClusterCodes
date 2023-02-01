@@ -2,9 +2,9 @@
 // Directories to read and save the data and plots ,normaly saves as NuQ2Yo-?Phi-?Pt-?Z/ with ? the number of bins
 const TString dataDirectory  = "/work/mbarrial/Data/";
 const TString inputDirectory  = "/work/mbarrial/Data/";
-const TString outputDirectory = "/work/mbarrial/Data/Nominal/";
+TString outputDirectory = "/work/mbarrial/Data/Nominal/";
 
-const int UseCutOff = 3; // Select 1 Use the Cutoff and the interpolation
+const int UseCutOff = 1; // Select 1 Use the Cutoff and the interpolation
 			// Select 2 Use the Cutoff 
 			// Select 3 Dont use any processing 
 // Number of  bins

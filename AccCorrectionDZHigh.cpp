@@ -18,7 +18,7 @@ int main(int argc, char* argv[]) {
     } 
     TStopwatch t;
     
-    TString systematic = "DZHigh"
+    TString systematic = "DZHigh";
 
     outputDirectory = outputDirectory + "Systematic/" + systematic + "/";
 
@@ -34,7 +34,7 @@ int main(int argc, char* argv[]) {
 
     int m;
     TString fileDataName;
-    // Select the data for the chosen solid target
+    // Select the data for the chosen solid target 
     if(targetArr[0] == 'D') {
         m = 2;
         char solidTarget[n];
@@ -44,7 +44,7 @@ int main(int argc, char* argv[]) {
         fileDataName = Form(dataDirectory + "VecSum" + systematic + "_%s.root", solidTarget);
     } else{
         m = n+1;
-        fileDataName = Form(dataDirectory + "VecSum" + systematic "_%s.root", targetArr);
+        fileDataName = Form(dataDirectory + "VecSum" + systematic + "_%s.root", targetArr);
     }
 
     // Select the target of the simultion

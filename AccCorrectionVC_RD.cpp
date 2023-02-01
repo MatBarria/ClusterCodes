@@ -18,7 +18,7 @@ int main(int argc, char* argv[]) {
     } 
     TStopwatch t;
     
-    TString systematic = "VC_RD"
+    TString systematic = "VC_RD";
 
     outputDirectory = outputDirectory + "Systematic/" + systematic + "/";
 
