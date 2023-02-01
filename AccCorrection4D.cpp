@@ -139,9 +139,9 @@ int main(int argc, char* argv[]) {
 
             ntupleData->Project("Data", "Pt2", Pt2Cut);
             if(EmptyHist(histData) == 1){ continue; }
-            ntupleSimul_rec->Project("Detected",    "Pt2_rec", Pt2Cut_rec&&GenCut);
-            ntupleSimul_gen->Project("Thrown",      "Pt2_gen", Pt2Cut_gen);
-            ntupleSimul_rec->Project("TotDetected", "Pt2_rec", Pt2Cut_rec);
+            ntupleSimul_rec->Project("Detected",    "Pt2_rec", cutsSimul_rec&&GenCut);
+            ntupleSimul_gen->Project("Thrown",      "Pt2_gen", cutsSimul_gen);
+            ntupleSimul_rec->Project("TotDetected", "Pt2_rec", cutsSimul_rec);
 
 
 
