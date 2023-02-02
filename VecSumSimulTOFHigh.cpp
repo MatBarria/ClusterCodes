@@ -34,7 +34,7 @@ int main(int argc, char* argv[]) {
     std::cout << "Start" << std::endl;
 
     TString inputName;
-    float DZcut = 3,;
+    float DZcut = 3;
     TString SimulDirectory = "/work/mbarrial/out/GetSimpleTuple_HSim/";
 
     // Set the variables that we want to save
@@ -383,7 +383,7 @@ int main(int argc, char* argv[]) {
     } // End folder loop
 
     // Save the Ntuple
-    TFile *fileOutput = new TFile(Form("/work/mbarrial/Data/SimulTupleTOFLow_%s.root", targetArr), "RECREATE");
+    TFile *fileOutput = new TFile(Form("/work/mbarrial/Data/SimulTupleTOFHigh_%s.root", targetArr), "RECREATE");
     fileOutput->cd();
     outputTuple->Write();
     gROOT->cd();
