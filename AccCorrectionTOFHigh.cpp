@@ -41,10 +41,10 @@ int main(int argc, char* argv[]) {
         for(int i = 0; i < n; i++){
             solidTarget[i] = targetArr[i+1];
         }
-        fileDataName = Form(dataDirectory + "VecSum" + systematic + "_%s.root", solidTarget);
+        fileDataName = Form(dataDirectory + "VecSum_%s" + systematic + ".root", solidTarget);
     } else{
         m = n+1;
-        fileDataName = Form(dataDirectory + "VecSum" + systematic + "_%s.root", targetArr);
+        fileDataName = Form(dataDirectory + "VecSum_%s" + systematic + ".root", targetArr);
     }
 
     // Select the target of the simultion

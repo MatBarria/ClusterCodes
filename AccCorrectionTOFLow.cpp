@@ -34,17 +34,17 @@ int main(int argc, char* argv[]) {
 
     int m;
     TString fileDataName;
-    // Select the data for the chosen solid target
+    // Select the data for the chosen solid target 
     if(targetArr[0] == 'D') {
         m = 2;
         char solidTarget[n];
         for(int i = 0; i < n; i++){
             solidTarget[i] = targetArr[i+1];
         }
-        fileDataName = Form(dataDirectory + "VecSum" + systematic + "_%s.root", solidTarget);
+        fileDataName = Form(dataDirectory + "VecSum_%s" + systematic + ".root", solidTarget);
     } else{
         m = n+1;
-        fileDataName = Form(dataDirectory + "VecSum" + systematic + "_%s.root", targetArr);
+        fileDataName = Form(dataDirectory + "VecSum_%s" + systematic + ".root", targetArr);
     }
 
     // Select the target of the simultion
@@ -59,11 +59,9 @@ int main(int argc, char* argv[]) {
     }
     // Open the input and output files
     TFile* fileData   = new TFile(fileDataName,"READ");
-    TFile* fileSimul  = new TFile(Form(dataDirectory + "VecSumSimul" + systematic + 
-                                        "_%s.root", simulTarget),
-            "READ");
-    TFile* fileOutput = new TFile(outputDirectory + 
-                             Form("corr_data_Phi_%i%i_%s.root", 
+    TFile* fileSimul  = new TFile(Form(dataDirectory + "VecSumSimul" + systematic + "_%s.root",
+                                        simulTarget), "READ");
+    TFile* fileOutput = new TFile(outputDirectory + Form("corr_data_Phi_%i%i_%s.root", 
                                   Q2Bin, NuBin, targetArr), "RECREATE");
     gROOT->cd();
 
