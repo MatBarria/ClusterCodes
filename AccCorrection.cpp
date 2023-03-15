@@ -11,6 +11,12 @@
 #include "Acc.h"
 
 int main(int argc, char* argv[]) { 
+    
+    // Set Pt2 Binning
+    Pt2_BINS[0] = 0.;
+    for(int i = 1; i < N_Pt2; i++) {
+        Pt2_BINS[i] = Pt2_BINS[i-1] + Delta_Pt2;
+    }
 
     if(argc != 4) {
         std::cout << "Incorrect number of arguments" << std::endl;  

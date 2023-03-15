@@ -73,7 +73,8 @@ int main(int argc, char* argv[]) {
     // Select liquid or solid target
     if(targetArr[0] == 'D') { VCData  = "VC_TM == 1.";}
     else {VCData  = "VC_TM == 2.";}
-    std::cout << Form("Simul target %s, Target %s", simulTarget, targetArr) << " and " << VCData << std::endl;
+    std::cout << Form("Simul target %s, Target %s", simulTarget, targetArr) << " and "
+                << VCData << std::endl;
 
     // Create all the necessary histograms
     TH1F* histDetected    = new TH1F("Detected",      "", N_Pt2, 0, 3);
@@ -204,4 +205,5 @@ int main(int argc, char* argv[]) {
     delete histDataCorr    ;
     delete histDataCorr2   ;
     return 0;
+
 }
