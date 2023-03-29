@@ -6,7 +6,7 @@ mkdir -p ${BINDIR}
 
 cd ${MAINDIR}
 
-g++ -Wall -fPIC -I${MAINDIR}/include `root-config --cflags` ${MAINDIR}/AccCorrection2.cpp -o ${BINDIR}/AccCorrection  `root-config --glibs` ${MAINDIR}/include/Acc.h
+g++ -Wall -fPIC -I${MAINDIR}/include `root-config --cflags` ${MAINDIR}/AccCorrectionNAccept0.cpp -o ${BINDIR}/AccCorrection  `root-config --glibs` ${MAINDIR}/include/Acc.h
 
 cd ${SHDIR}
 

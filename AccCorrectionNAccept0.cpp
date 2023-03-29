@@ -24,6 +24,9 @@ int main(int argc, char* argv[]) {
     } 
     TStopwatch t;
 
+    TString systematic = "NAccept0";
+    outputDirectory = outputDirectory + "Systematic/" + systematic + "/";
+    
     std::cout << "Start" << std::endl;
 
     std::string target = argv[1];
