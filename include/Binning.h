@@ -2,8 +2,8 @@
 // Directories to read and save the data and plots ,normaly saves as NuQ2Yo-?Phi-?Pt-?Z/ with ? the number of bins
 const TString dataDirectory  = "/work/mbarrial/Data/";
 const TString inputDirectory  = "/work/mbarrial/Data/";
-TString outputDirectory = "/work/mbarrial/Data/Bins/50/";
-const int N_Pt2 = 50;
+TString outputDirectory = "/work/mbarrial/Data/70/Systematic/NAccept0/";
+const int N_Pt2 = 70;
 float Pt2_BINS[N_Pt2+1];
 
 const int UseCutOff = 1; // Select 1 Use the Cutoff and the interpolation
