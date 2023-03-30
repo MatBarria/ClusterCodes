@@ -10,17 +10,16 @@ g++ -Wall -fPIC -I${MAINDIR}/include `root-config --cflags` ${MAINDIR}/AccCorrec
 
 cd ${SHDIR}
 
-#for i in  0 1 2
-#do
-  #for j in  0 1 2 
-  #do
-    #bash AccJob.sh C $i $j 
-    #bash AccJob.sh Fe $i $j 
-    #bash AccJob.sh Pb $i $j 
-    #bash AccJob.sh DC $i $j 
-    #bash AccJob.sh DFe $i $j 
-    #bash AccJob.sh DPb $i $j 
-  #done
-#done
+for i in  0 1 2
+do
+  for j in  0 1 2 
+  do
+    bash AccJob.sh C $i $j 
+    bash AccJob.sh Fe $i $j 
+    bash AccJob.sh Pb $i $j 
+    bash AccJob.sh DC $i $j 
+    bash AccJob.sh DFe $i $j 
+    bash AccJob.sh DPb $i $j 
+  done
+done
 
-bash AccJob.sh C 0 0
