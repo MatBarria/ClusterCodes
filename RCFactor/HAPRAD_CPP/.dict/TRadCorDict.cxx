@@ -1,6 +1,7 @@
 // Do NOT change. Changes will be lost next time file is generated
 
 #define R__DICTIONARY_FILENAME dOdictdITRadCorDict
+#define R__NO_DEPRECATION
 
 /*******************************************************************/
 #include <stddef.h>
@@ -33,18 +34,18 @@
 
 #include "TDataMember.h"
 
-// Since CINT ignores the std namespace, we need to do so in this file.
-namespace std {} using namespace std;
-
 // Header files passed as explicit arguments
 #include "TRadCor.h"
 
 // Header files passed via #pragma extra_include
 
+// The generated code does not explicitly qualify STL entities
+namespace std {} using namespace std;
+
 namespace ROOT {
    static TClass *TRadCor_Dictionary();
    static void TRadCor_TClassManip(TClass*);
-   static void *new_TRadCor(void *p = 0);
+   static void *new_TRadCor(void *p = nullptr);
    static void *newArray_TRadCor(Long_t size, void *p);
    static void delete_TRadCor(void *p);
    static void deleteArray_TRadCor(void *p);
@@ -53,7 +54,7 @@ namespace ROOT {
    // Function generating the singleton type initializer
    static TGenericClassInfo *GenerateInitInstanceLocal(const ::TRadCor*)
    {
-      ::TRadCor *ptr = 0;
+      ::TRadCor *ptr = nullptr;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::TRadCor));
       static ::ROOT::TGenericClassInfo 
          instance("TRadCor", "TRadCor.h", 11,
@@ -69,14 +70,14 @@ namespace ROOT {
    }
    TGenericClassInfo *GenerateInitInstance(const ::TRadCor*)
    {
-      return GenerateInitInstanceLocal((::TRadCor*)0);
+      return GenerateInitInstanceLocal((::TRadCor*)nullptr);
    }
    // Static variable to force the class initialization
-   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const ::TRadCor*)0x0); R__UseDummy(_R__UNIQUE_DICT_(Init));
+   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal((const ::TRadCor*)nullptr); R__UseDummy(_R__UNIQUE_DICT_(Init));
 
    // Dictionary for non-ClassDef classes
    static TClass *TRadCor_Dictionary() {
-      TClass* theClass =::ROOT::GenerateInitInstanceLocal((const ::TRadCor*)0x0)->GetClass();
+      TClass* theClass =::ROOT::GenerateInitInstanceLocal((const ::TRadCor*)nullptr)->GetClass();
       TRadCor_TClassManip(theClass);
    return theClass;
    }
@@ -111,42 +112,40 @@ namespace {
   void TriggerDictionaryInitialization_TRadCorDict_Impl() {
     static const char* headers[] = {
 "TRadCor.h",
-0
+nullptr
     };
     static const char* includePaths[] = {
-"/home/matias/software/safe/construir/include",
-"/home/matias/proyecto/Pt2Broadening_multi-pion/RCFactor/HAPRAD_CPP/",
-0
+"/home/matias/software/build/include/",
+"/home/matias/proyecto/ClusterCodes/RCFactor/HAPRAD_CPP/",
+nullptr
     };
     static const char* fwdDeclCode = R"DICTFWDDCLS(
 #line 1 "TRadCorDict dictionary forward declarations' payload"
 #pragma clang diagnostic ignored "-Wkeyword-compat"
 #pragma clang diagnostic ignored "-Wignored-attributes"
 #pragma clang diagnostic ignored "-Wreturn-type-c-linkage"
-extern int __Cling_Autoloading_Map;
+extern int __Cling_AutoLoading_Map;
 class __attribute__((annotate("$clingAutoload$TRadCor.h")))  TRadCor;
 )DICTFWDDCLS";
     static const char* payloadCode = R"DICTPAYLOAD(
 #line 1 "TRadCorDict dictionary payload"
 
-#ifndef G__VECTOR_HAS_CLASS_ITERATOR
-  #define G__VECTOR_HAS_CLASS_ITERATOR 1
-#endif
 
 #define _BACKWARD_BACKWARD_WARNING_H
+// Inline headers
 #include "TRadCor.h"
 
 #undef  _BACKWARD_BACKWARD_WARNING_H
 )DICTPAYLOAD";
-    static const char* classesHeaders[]={
+    static const char* classesHeaders[] = {
 "TRadCor", payloadCode, "@",
-nullptr};
-
+nullptr
+};
     static bool isInitialized = false;
     if (!isInitialized) {
       TROOT::RegisterModule("TRadCorDict",
         headers, includePaths, payloadCode, fwdDeclCode,
-        TriggerDictionaryInitialization_TRadCorDict_Impl, {}, classesHeaders);
+        TriggerDictionaryInitialization_TRadCorDict_Impl, {}, classesHeaders, /*hasCxxModule*/false);
       isInitialized = true;
     }
   }

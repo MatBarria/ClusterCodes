@@ -15,27 +15,27 @@
 #include "TCanvas.h"
 
 
-const TString inputDirectory  = "/work/mbarrial/Data/RCNominal/";
-const TString outputDirectory = "/work/mbarrial/Data/RCNominal/";
+const TString inputDirectory  = "/work/mbarrial/Data/60/RCFactors/";
+const TString outputDirectory = "/work/mbarrial/Data/60/RCFactors/";
 
 int PhiPQ(std::string target);
 
 int main(){
 
-  std::cout << "PhiPQ C" << std::endl;
-  PhiPQ("C");
-  std::cout << "PhiPQ Fe" << std::endl;
-  PhiPQ("Fe");
-  std::cout << "PhiPQ Pb" << std::endl;
-  PhiPQ("Pb");
-  std::cout << "PhiPQ DC" << std::endl;
-  PhiPQ("DC");
-  std::cout << "PhiPQ DFe" << std::endl;
-  PhiPQ("DFe");
-  std::cout << "PhiPQ DPb" << std::endl;
-  PhiPQ("DPb");
+    std::cout << "PhiPQ C" << std::endl;
+    PhiPQ("C");
+    std::cout << "PhiPQ Fe" << std::endl;
+    PhiPQ("Fe");
+    std::cout << "PhiPQ Pb" << std::endl;
+    PhiPQ("Pb");
+    std::cout << "PhiPQ DC" << std::endl;
+    PhiPQ("DC");
+    std::cout << "PhiPQ DFe" << std::endl;
+    PhiPQ("DFe");
+    std::cout << "PhiPQ DPb" << std::endl;
+    PhiPQ("DPb");
 
-  return 0;
+    return 0;
 }
 
 
@@ -56,7 +56,8 @@ int PhiPQ(std::string target) {
     //float Masa = 0.938; // Nucleon Mass (Proton)
     int empty;
     int minBins = 3; // Min number of bins no empty bins that the histogram must have
-    TFile* inputFile = new TFile(inputDirectory + "corr_data_Phi.root", "READ");
+    //TFile* inputFile = new TFile(inputDirectory + "corr_data_Phi.root", "READ");
+    TFile* inputFile = new TFile(inputDirectory + "corr_data_Phi_Evnt.root", "READ");
     TFile* binsFile  = new TFile(inputDirectory + Form("Centroid_%s.root", targetArr), "READ");
     TFile* fileData  = new TFile(fileDataName, "READ");
     TF1 *func = new TF1("fit", 
@@ -64,7 +65,7 @@ int PhiPQ(std::string target) {
 
     for(int nPion = 1; nPion <= N_PION; nPion++) { // Loops in every number of pion
         TFile* outputFile = new TFile(outputDirectory + Form("%snewphihist%i.root", targetArr,
-                                        nPion), 
+                    nPion), 
                 "RECREATE");
         gROOT->cd();
         TNtuple* newntuple = new TNtuple("AAcAcc_data", "AAcAcc_data", 

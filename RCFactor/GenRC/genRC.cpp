@@ -31,8 +31,8 @@ int main(int argc, char* argv[]) {
 
     std::cout << "Start" << std::endl;
 
-    const TString inputDirectory  = "/work/mbarrial/Data/RCNominal/";
-    const TString outputDirectory = "/work/mbarrial/Data/RCNominal/";
+    const TString inputDirectory  = "/work/mbarrial/Data/60/RcFactors/";
+    const TString outputDirectory = "/work/mbarrial/Data/60/RcFactors/";
 
     std::string target = argv[1];
     int nPion = (int)*argv[2] - 48;
