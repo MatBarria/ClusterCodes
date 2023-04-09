@@ -19,7 +19,7 @@ LDFLAGS   = -O3 $(ROOTLDFLAGS) -lgfortran -Wl,-rpath,$(HAPRAD_CPP)/slib
 
 INCLUDES  := -I$(HAPRAD_CPP) -I/work/mbarrial/ClusterCodes/RCFactor/include
 #LIBS      := -L/$(HAPRAD_CPP)/slib -lTRadCor $(ROOTLIBS) -lMathMore -L/usr/lib64/cernlib/2006/lib/ $(CERNLIBS)
-LIBS      := -lstdc++ -L$(HAPRAD_CPP)/slib -lTRadCor $(ROOTLIBS) -lMathMore -L/opt/cern/pro/lib/ $(CERNLIBS) /work/mbarrial/ClusterCodes/include/Binning_Rc.h
+LIBS      := -lstdc++ -L$(HAPRAD_CPP)/slib -lTRadCor $(ROOTLIBS) -lMathMore -L/opt/cern/pro/lib/ $(CERNLIBS) /work/mbarrial/ClusterCodes/RCFactor/include/Binning_Rc.h
 
 all: genRC
 
