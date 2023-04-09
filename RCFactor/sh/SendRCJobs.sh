@@ -21,8 +21,12 @@ do
   do
     for k in  0 1 2 3 4 5 6
     do
-        bash RCJob.sh ${TARNAME} ${NPION} $i $j $k
+        #bash RCJob.sh ${TARNAME} ${NPION} $i $j $k
+        echo "-.-"
     done
   done
 done
 
+
+bash RCJob.sh ${TARNAME} ${NPION} 0 2 $k
+bash RCJob.sh ${TARNAME} ${NPION} 1 2 $k

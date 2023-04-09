@@ -100,19 +100,24 @@ int main(int argc, char* argv[]) {
                         (int)ZhBinSelect , nPion), "RECREATE");
     gROOT->cd();
     for(int i = 0; i < ntupleBins->GetEntries(); i++) {
+
         ntupleBins->GetEntry(i);
+        
         if((int)Q2Bin != Q2BinSelect || (int)NuBin != NuBinSelect 
                 || ( ZhBinSelect < 6 && (int)ZhBin != ZhBinSelect)) { continue; } 
+        TH1F *hist = (TH1F*) fileHist->Get(Form("PhiDist Q2=%.3f Xb=%.3f Zh=%.3f Pt=%.3f", 
+                        Q2, Xb, Zh, Pt));
+
+        if(hist == NULL) {
+            delete hist;
+            std::cout << "here Null for: " << Q2Bin << NuBin << ZhBin << Pt2Bin << std::endl;
+            continue;
+        }
+        delete hist;
+        
+        std::cout << "Current bin: " << Q2Bin << NuBin << ZhBin << Pt2Bin << std::endl;
         for(int PhiCounter = 0 ; PhiCounter < N_Phi ; PhiCounter++) { // Loops in every Phi bin
 
-            TH1F *hist = (TH1F*) fileHist->Get(Form("PhiDist Q2=%.3f Xb=%.3f Zh=%.3f Pt=%.3f", 
-                        Q2, Xb, Zh, Pt));
-            if(hist == NULL) {
-                delete hist;
-                std::cout << "here for: " << Q2Bin << NuBin << ZhBin << std::endl;
-                continue;
-            }
-            delete hist;
             Phi = (Phi_BINS[PhiCounter] + Phi_BINS[PhiCounter+1])/2;
             rc.CalculateRCFactor(5.015, Xb, Q2, Zh, Pt, Phi, m, NAZ);
             f1 = rc.GetFactor1();
