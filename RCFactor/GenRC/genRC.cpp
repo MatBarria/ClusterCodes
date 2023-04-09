@@ -22,26 +22,32 @@
 int main(int argc, char* argv[]) {
 
     std::cout << "Pre Start" << std::endl;
-    if(argc != 5) {
+    if(argc != 6) {
         std::cout << "Insert (just) the target name as a parameter" << std::endl;
         return 0;
     }
 
+    Phi_BINS[0] = -180;
+    for(int i = 1; i <= N_Phi; i++) {
+        Phi_BINS[i] = Phi_BINS[i-1] + Delta_Phi;
+    }
     TStopwatch t;
 
     std::cout << "Start" << std::endl;
 
-    const TString inputDirectory  = "/work/mbarrial/Data/60/RcFactors/";
-    const TString outputDirectory = "/work/mbarrial/Data/60/RcFactors/";
+    const TString inputDirectory  = "/work/mbarrial/Data/60/RCFactors/";
+    const TString outputDirectory = "/work/mbarrial/Data/60/RCFactors/";
 
     std::string target = argv[1];
     int nPion = (int)*argv[2] - 48;
     int Q2BinSelect = (int)*argv[3] - 48;
     int NuBinSelect = (int)*argv[4] - 48;
+    int ZhBinSelect = (int)*argv[5] - 48;
     //int ZhBinSelect = (int)*argv[5] - 48;
     std::cout << "N PION = " << nPion << std::endl;
     std::cout << "Q2 bin = " << Q2BinSelect << std::endl;
     std::cout << "Nu bin = " << NuBinSelect << std::endl;
+    std::cout << "Zh bin = " << NuBinSelect << std::endl;
     //std::cout << "Zh bin = " << NuBinSelect << std::endl;
     // Creating a array of chars instead of a string to use Form method
     int n = target.length();
@@ -89,12 +95,14 @@ int main(int argc, char* argv[]) {
 
 
     gROOT->cd();
-    TFile* outputFile = new TFile(outputDirectory + Form("RcFactors_%s_%i%i_%i.root", targetArr, 
-                (int)Q2BinSelect, (int)NuBinSelect, nPion), "RECREATE");
+    TFile* outputFile = new TFile(outputDirectory + Form("RcFactors_%s_%i%i%i_%i.root", 
+                        targetArr, (int)Q2BinSelect, (int)NuBinSelect, 
+                        (int)ZhBinSelect , nPion), "RECREATE");
     gROOT->cd();
     for(int i = 0; i < ntupleBins->GetEntries(); i++) {
         ntupleBins->GetEntry(i);
-        if((int)Q2Bin != Q2BinSelect || (int)NuBin != NuBinSelect) { continue; } 
+        if((int)Q2Bin != Q2BinSelect || (int)NuBin != NuBinSelect 
+                || ( ZhBinSelect < 6 && (int)ZhBin != ZhBinSelect)) { continue; } 
         for(int PhiCounter = 0 ; PhiCounter < N_Phi ; PhiCounter++) { // Loops in every Phi bin
 
             TH1F *hist = (TH1F*) fileHist->Get(Form("PhiDist Q2=%.3f Xb=%.3f Zh=%.3f Pt=%.3f", 

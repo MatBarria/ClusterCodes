@@ -3,7 +3,7 @@ SHDIR=${MAINDIR}/sh
 BINDIR=${MAINDIR}/bin
 
 mkdir -p ${BINDIR}
-cd ${BINDIR}
+cd ${MAINDIR}
 
 g++ -Wall -fPIC -I./include `root-config --cflags` PhiHist.cpp -o ./bin/PhiHist `root-config --glibs` ./include/Acc_Rc.h
 

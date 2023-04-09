@@ -19,7 +19,10 @@ for i in  0 1 2
 do
   for j in  0 1 2 
   do
-    bash RCJob.sh ${TARNAME} ${NPION} $i $j 
+    for k in  0 1 2 3 4 5 6
+    do
+        bash RCJob.sh ${TARNAME} ${NPION} $i $j $k
+    done
   done
 done
 
