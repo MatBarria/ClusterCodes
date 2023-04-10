@@ -31,4 +31,4 @@ echo "source ${HOME}/.bashrc"                                     >> ${jobfile}
 echo "cd ${JOBDIR}"                                               >> ${jobfile}
 echo "./genRC ${TARNAME} ${NPION} ${Q2BIN} ${NUBIN} ${ZHBIN} 2> /dev/null"             >> ${jobfile}
 echo "Submitting job: ${jobfile}"
-#sbatch ${jobfile} # submit job!
+sbatch ${jobfile} # submit job!

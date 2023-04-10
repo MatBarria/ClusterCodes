@@ -28,5 +28,5 @@ do
 done
 
 
-bash RCJob.sh ${TARNAME} ${NPION} 0 2 $k
-bash RCJob.sh ${TARNAME} ${NPION} 1 2 $k
+bash RCJob.sh ${TARNAME} ${NPION} 0 2 6
+bash RCJob.sh ${TARNAME} ${NPION} 1 2 6
