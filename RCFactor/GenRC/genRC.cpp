@@ -47,7 +47,7 @@ int main(int argc, char* argv[]) {
     std::cout << "N PION = " << nPion << std::endl;
     std::cout << "Q2 bin = " << Q2BinSelect << std::endl;
     std::cout << "Nu bin = " << NuBinSelect << std::endl;
-    std::cout << "Zh bin = " << NuBinSelect << std::endl;
+    std::cout << "Zh bin = " << ZhBinSelect << std::endl;
     //std::cout << "Zh bin = " << NuBinSelect << std::endl;
     // Creating a array of chars instead of a string to use Form method
     int n = target.length();
@@ -103,6 +103,8 @@ int main(int argc, char* argv[]) {
 
         ntupleBins->GetEntry(i);
         
+        std::cout << "loop bin bin: " << " " << (int)Q2Bin << " " << (int)NuBin << " " 
+                  << (int)ZhBin << " " << (int)Pt2Bin << std::endl;
         if((int)Q2Bin != Q2BinSelect || (int)NuBin != NuBinSelect ) { continue; } 
         if(ZhBin < 6.1 && (int)ZhBin != ZhBinSelect) { continue; }
         if(ZhBin > 5.9 && ZhBinSelect == 6) { continue; }
