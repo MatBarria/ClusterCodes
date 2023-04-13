@@ -107,7 +107,7 @@ int main(int argc, char* argv[]) {
                   << (int)ZhBin << " " << (int)Pt2Bin << std::endl;
         if((int)Q2Bin != Q2BinSelect || (int)NuBin != NuBinSelect ) { continue; } 
         if(ZhBin < 6.1 && (int)ZhBin != ZhBinSelect) { continue; }
-        if(ZhBin > 5.9 && ZhBinSelect == 6) { continue; }
+        if(ZhBin > 5.9 && ZhBinSelect != 6) { continue; }
 
         TH1F *hist = (TH1F*) fileHist->Get(Form("PhiDist Q2=%.3f Xb=%.3f Zh=%.3f Pt=%.3f", 
                         Q2, Xb, Zh, Pt));

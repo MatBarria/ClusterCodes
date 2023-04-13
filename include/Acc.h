@@ -59,3 +59,15 @@ void AccHist0To1(TH1F* hist) {
   }
 
 }
+
+void AccLimit(TH1F* hist, float limit) {
+
+    
+  for(Int_t bin = 1; bin <= hist->GetNbinsX(); bin++) {
+    if(hist->GetBinContent(bin) < limit) {
+      hist->SetBinContent(bin, 0);
+      hist->SetBinError(bin, 0);
+    }
+  }
+
+}
