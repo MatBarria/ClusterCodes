@@ -3,7 +3,7 @@
 const TString dataDirectory  = "/work/mbarrial/Data/";
 const TString inputDirectory  = "/work/mbarrial/Data/";
 TString outputDirectory = "/work/mbarrial/Data/60/";
-const int N_Pt2 = 60
+const int N_Pt2 = 60;
 float Pt2_BINS[N_Pt2+1];
 
 const int UseCutOff = 1; // Select 1 Use the Cutoff and the interpolation

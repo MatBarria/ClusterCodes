@@ -90,7 +90,7 @@ int main(int argc, char* argv[]) {
     TH1F* histData        = new TH1F("Data",          "", N_Phi, -180, 180);
     TH1F* histFalPos      = new TH1F("FalPosFactor",  "", N_Phi, -180, 180);
     TH1F* histAccFactors  = new TH1F("AccFactor",     "", N_Phi, -180, 180);
-    TH1F* histFinalFactor    = new TH1F("DataCorr",      "", N_Phi, -180, 180);
+    TH1F* histFinalFactor = new TH1F("FinalFactor",      "", N_Phi, -180, 180);
     TH1F* histDataCorr2   = new TH1F("DataCorr2",     "", N_Phi, -180, 180);
 
     // Store the sum of the weights A.K.A the erros (in the other histograms if save it by other methods)
@@ -158,8 +158,8 @@ int main(int argc, char* argv[]) {
                 ntupleData->Project("Data", "PhiPQ", Pt2Cut);
                 // If there isn't any event in data skip this bin
                 if(EmptyHist(histData) == 1){ continue; }
-                //ntupleSimul_rec->Project("Detected",    "PhiPQ_rec", Pt2Cut_rec&&GenCut);
-                if(EmptyHist(histDetected) == 1){ continue; }
+                ntupleSimul_rec->Project("Detected",    "PhiPQ_rec", Pt2Cut_rec&&GenCut);
+                //if(EmptyHist(histDetected) == 1){ continue; }
                 ntupleSimul_gen->Project("Thrown",      "PhiPQ_gen", Pt2Cut_gen);
                 ntupleSimul_rec->Project("TotDetected", "PhiPQ_rec", Pt2Cut_rec);
 
@@ -183,7 +183,7 @@ int main(int argc, char* argv[]) {
                             NuBin, ZhCounter, Pt2Counter, gen));
                 histDataCorr2->Write(Form("DataCorr2_%s_%i%i%i%i_%i",  targetArr, Q2Bin, 
                             NuBin, ZhCounter, Pt2Counter, gen));
-                histFinalFactor->Write(Form("DataCorr_%s_%i%i%i%i_%i",    targetArr, Q2Bin, 
+                histFinalFactor->Write(Form("FinalFactor_%s_%i%i%i%i_%i",    targetArr, Q2Bin, 
                             NuBin, ZhCounter, Pt2Counter, gen));
                 histFalPos->Write(Form("FalPosFactor_%s_%i%i%i%i_%i",  targetArr, Q2Bin, 
                             NuBin, ZhCounter, Pt2Counter, gen));
