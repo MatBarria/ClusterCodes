@@ -24,7 +24,7 @@ int main(int argc, char* argv[]) {
     TStopwatch t;
     
     TString systematic = "LimitLow";
-    float limit = 0.01;
+    float limit = 0.015;
 
     outputDirectory = outputDirectory + "Systematic/" + systematic + "/";
 
