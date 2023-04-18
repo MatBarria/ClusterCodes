@@ -38,7 +38,7 @@ int main(int argc, char* argv[]) {
 
     TFile* fileData   = new TFile(Form(dataDirectory + "SimulTuple_%s_2.root", targetArr), "READ");
     TFile* fileSimul  = new TFile(Form(dataDirectory + "SimulTuple_%s_1.root", targetArr), "READ");
-    TFile* fileOutput = new TFile(Form(outputDirectory + "Weights.root", targetArr), "READ");
+    TFile* fileOutput = new TFile(Form(outputDirectory + "Weights_%s_%i%i.root", targetArr), "READ");
     gROOT->cd();
 
     // Create some variables to use inside the for loops

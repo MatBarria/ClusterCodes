@@ -3,7 +3,7 @@ TARNAME="$@"
 # set dirs
 MAINDIR=/work/mbarrial/ClusterCodes              # dir of the program
 JOBDIR=/work/mbarrial/ClusterCodes/bin          # dir to store logs and job scripts
-LOGSDIR=/work/mbarrial/ClusterCodes/bin          # dir to store logs and job scripts
+LOGSDIR=/work/mbarrial/ClusterCodes/logs          # dir to store logs and job scripts
 
 mkdir -p ${JOBDIR} ${LOGSDIR} # just in case
 

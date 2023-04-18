@@ -1,6 +1,7 @@
 #include "TString.h"
 // Directories to read and save the data and plots ,normaly saves as NuQ2Yo-?Phi-?Pt-?Z/ with ? the number of bins
 const TString dataDirectory  = "/work/mbarrial/Data/";
+//const TString dataDirectory  = "/home/matias/proyecto/Pt2Broadening_multi-pion/Data/";
 const TString inputDirectory  = "/work/mbarrial/Data/";
 TString outputDirectory = "/work/mbarrial/Data/60/";
 const int N_Pt2 = 60;

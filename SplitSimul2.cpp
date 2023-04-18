@@ -1,5 +1,5 @@
 // It can be compile with
-// g++ -Wall -fpic -I./include `root-config --cflags` SplitSimul.cpp -o ./bin/SplitSimul `root-config --glibs` ./include/Binning.h
+// g++ -Wall -fpic -I./include `root-config --cflags` SplitSimul2.cpp -o ./bin/SplitSimul `root-config --glibs` ./include/Binning.h
 // For the target name use (D,C,Fe,Pb)
 
 #include <iostream>
@@ -22,11 +22,6 @@ int main(int argc, char* argv[]) {
 
     // For the Target name use (D,C,Fe,Pb)
     std::string target = argv[1];
-    //int digit1 = (int)*argv[2] - 48;
-    //int digit2 = (int)*argv[3] - 48;
-    //int run = 10* digit1 + digit2;
-    //int totalRuns = 40;
-    //std::cout << "Run : " << run << std::endl;
     // Creating a array of chars instead of a string to use Form method
     int n = target.length();
     char targetArr[n + 1];
@@ -59,53 +54,38 @@ int main(int argc, char* argv[]) {
     simulTupleRec->SetBranchAddress("Pt2_rec"   , &varsRec[5]);
     simulTupleRec->SetBranchAddress("PhiPQ_rec" , &varsRec[6]);
 
-    TFile *FirstHalfFile  = new TFile(dataDirectory + Form("SimulTuple_%s_1.root", targetArr) 
+    TFile *SecondHalfFile = new TFile(dataDirectory + Form("SimulTuple_%s_2.root", targetArr)
                 , "RECREATE");
-    //TFile *SecondHalfFile = new TFile(dataDirectory + Form("SimulTuple_%s_2_%i.root", targetArr, 
-            //run), "RECREATE");
     gROOT->cd();
 
-    TNtuple *FHtupleGen = new TNtuple("FHntuple_sim_gen", "", VarListGen);
-    TNtuple *FHtupleRec = new TNtuple("FHntuple_sim_rec", "", VarListRec);
-    //TNtuple *SHtupleGen = new TNtuple("SHntuple_sim_gen", "", VarListGen);
-    //TNtuple *SHtupleRec = new TNtuple("SHntuple_sim_rec", "", VarListRec);
+    TNtuple *SHtupleGen = new TNtuple("SHntuple_sim_gen", "", VarListGen);
+    TNtuple *SHtupleRec = new TNtuple("SHntuple_sim_rec", "", VarListRec);
 
     int limit = (int)(simulTupleRec->GetEntries()/2);
-    //std::cout << "Start from: " << run*limit << " until: " << (run + 1)*limit << std::endl;
+    std::cout << "Start from: " << limit << " until: " << 2*limit << std::endl;
 
-    for(int i = 0; i < limit ; i++) { 
+    for(int i = limit; i < 2*limit ; i++) { 
 
-        //std::cout << "Entry : " << i << std::endl;
-        simulTupleGen->GetEntry(i);
-        simulTupleRec->GetEntry(i);
-        FHtupleGen->Fill(varsGen);
-        FHtupleRec->Fill(varsRec);
-        //simulTupleGen->GetEntry((simulTupleRec->GetEntries()/2)+i-1);
-        //simulTupleRec->GetEntry((simulTupleRec->GetEntries()/2)+i-1);
-        //SHtupleGen->Fill(varsGen);
-        //SHtupleRec->Fill(varsRec);
+        //std::cout << "Entry : " << (int)(simulTupleRec->GetEntries()/2)+i-1<< std::endl;
+
+        simulTupleGen->GetEntry(i-1);
+        simulTupleRec->GetEntry(i-1);
+        //std::cout << "Q2: " << varsGen[2]<< std::endl;
+        SHtupleGen->Fill(varsGen);
+        SHtupleRec->Fill(varsRec);
     }
 
-    FirstHalfFile->cd();
-    FHtupleGen->Write("ntuple_sim_gen");
-    FHtupleRec->Write("ntuple_sim_rec");
+    SecondHalfFile->cd();
+    SHtupleGen->Write("ntuple_sim_gen");
+    SHtupleRec->Write("ntuple_sim_rec");
     gROOT->cd();
 
-
-    //SecondHalfFile->cd();
-    //SHtupleGen->Write("ntuple_sim_gen");
-    //SHtupleRec->Write("ntuple_sim_rec");
-    //gROOT->cd();
-
-    FirstHalfFile->Close();
     delete simulTupleGen;
     delete simulTupleRec;
-    //SecondHalfFile->Close(); 
+    SecondHalfFile->Close(); 
     simFile->Close();
-    delete FHtupleGen;
-    delete FHtupleRec;
-    //delete SHtupleGen;
-    //delete SHtupleRec;
+    delete SHtupleGen;
+    delete SHtupleRec;
 
     t.Print();
 
