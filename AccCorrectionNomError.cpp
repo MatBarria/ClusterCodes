@@ -5,10 +5,12 @@
 // For simultion use the tuple generate by the code VecSumSimul.cpp
 // For data the tuple generate by the code VecSum.cpp
 // It can be compile with
-// g++ -Wall -fPIC -I./include `root-config --cflags` AccCorrection.cpp -o ./bin/AccCorrection `root-config --glibs` ./include/Acc.h
+// g++ -Wall -fPIC -I./include `root-config --cflags` AccCorrectionNomError.cpp -o ./bin/AccCorrection `root-config --glibs` ./include/Acc.h
 // For the target name use (C,Fe,Pb) for the solids targets and (DC,DFe,DPb) for the liquid target
 
 #include "Acc.h"
+
+int EmptyBinRec(TH1F* histDetected, TH1F* histFinalFactor);
 
 int main(int argc, char* argv[]) { 
     
@@ -157,8 +159,11 @@ int main(int argc, char* argv[]) {
 
                 histFinalFactor->Divide(histThrown, histTotDetected, 1, 1, "B");
 
+                EmptyBinRec(histDetected, histFinalFactor);
+
                 // Apply the correction factors
-                histDataCorr2->Divide(histDataCorr, histFinalFactor, 1, 1);
+                histDataCorr2->Divide(histData, histFinalFactor, 1, 1);
+
 
                 // Save the histograms in the output file
                 fileOutput->cd();
@@ -200,6 +205,20 @@ int main(int argc, char* argv[]) {
     delete histData        ;
     delete histDataCorr2   ;
     delete histFinalFactor ;
+    return 0;
+
+}
+
+int EmptyBinRec(TH1F* histDetected, TH1F* histFinalFactor) {
+
+    for(int bin = 1 ; bin <= histDetected->GetNbinsX() ; bin++) {
+
+        if(histDetected->GetBinContent(bin) == 0) { 
+            histFinalFactor->SetBinContent(bin, 0);
+            histFinalFactor->SetBinError(bin, 0);
+        }
+    }
+
     return 0;
 
 }
