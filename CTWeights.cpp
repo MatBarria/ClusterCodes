@@ -34,11 +34,11 @@ int main(int argc, char* argv[]) {
     int Q2Bin = (int)*argv[2] - 48;
     int NuBin = (int)*argv[3] - 48;
 
-    outputDirectory = outputDirectory + "Systematic/CT/";
+    //outputDirectory = outputDirectory + "Systematic/CT/";
 
     TFile* fileData   = new TFile(Form(dataDirectory + "SimulTuple_%s_2.root", targetArr), "READ");
     TFile* fileSimul  = new TFile(Form(dataDirectory + "SimulTuple_%s_1.root", targetArr), "READ");
-    TFile* fileOutput = new TFile(Form(outputDirectory + "Weights_%s_%i%i.root", targetArr), "READ");
+    TFile* fileOutput = new TFile(Form(outputDirectory + "Weights_%s_%i%i.root", targetArr, Q2Bin, NuBin), "RECREATE");
     gROOT->cd();
 
     // Create some variables to use inside the for loops
@@ -85,14 +85,15 @@ int main(int argc, char* argv[]) {
             cutsGen  = Q2CutGen&&NuCutGen&&ZhCutGen&&GenCut;
             cutsRec  = Q2CutRec&&NuCutRec&&ZhCutRec&&RecCut;
 
-            TNtuple* ntupleDataRec  = (TNtuple*) fileData->Get("ntuple_sim_rec_2");
-            TNtuple* ntupleDataGen  = (TNtuple*) fileData->Get("ntuple_sim_gen_2");
-            TNtuple* ntupleSimulGen = (TNtuple*) fileSimul->Get("ntuple_sim_gen_1");
-            TNtuple* ntupleSimulRec = (TNtuple*) fileSimul->Get("ntuple_sim_rec_1");
+
+            TNtuple* ntupleDataGen  = (TNtuple*) fileData->Get("ntuple_sim_gen");
+            TNtuple* ntupleDataRec  = (TNtuple*) fileData->Get("ntuple_sim_rec");
+            TNtuple* ntupleSimulGen = (TNtuple*) fileSimul->Get("ntuple_sim_gen");
+            TNtuple* ntupleSimulRec = (TNtuple*) fileSimul->Get("ntuple_sim_rec");
 
             // Apply the cuts to the ntuples to increces the efficiency
+            ntupleDataGen->Draw(">>listDataGen", cutsGen);
             ntupleDataRec->Draw(">>listDataRec", cutsRec);
-            ntupleDataGen->Draw(">>listDataGen", cutsRec);
             ntupleSimulGen->Draw(">>listSimulGen", cutsGen);
             ntupleSimulRec->Draw(">>listSimulRec", cutsRec);
             TEventList* evntDataRec  = (TEventList*) gDirectory->Get("listDataRec");
@@ -135,29 +136,29 @@ int main(int argc, char* argv[]) {
                 if(targetArr[0] != 'D') { 
                     histDataCorr2->Write(Form("DataCorr2_%s_%i%i%i%i_%i",  targetArr, Q2Bin, 
                                 NuBin, ZhCounter, Pt2Counter, gen));
-                    histDataCorr->Write(Form("DataCorr_%s_%i%i%i%i_%i",    targetArr, Q2Bin,
+                    histDataGen->Write(Form("DataGen_%s_%i%i%i%i_%i",    targetArr, Q2Bin,
                                 NuBin, ZhCounter, Pt2Counter, gen));
-                    histDataCorr->Write(Form("Weight_%s_%i%i%i%i_%i",      targetArr, Q2Bin,
+                    histWeight->Write(Form("Weight_%s_%i%i%i%i_%i",      targetArr, Q2Bin,
                                 NuBin, ZhCounter, Pt2Counter, gen));
                     // Save the histograms in the output file
                 } else {
                     histDataCorr2->Write(Form("DataCorr2_%sC_%i%i%i%i_%i",  targetArr, Q2Bin,
                                 NuBin, ZhCounter, Pt2Counter, gen));
-                    histDataCorr->Write(Form("DataCorr_%sC_%i%i%i%i_%i",    targetArr, Q2Bin,
+                    histDataGen->Write(Form("DataGen_%sC_%i%i%i%i_%i",    targetArr, Q2Bin,
                                 NuBin, ZhCounter, Pt2Counter, gen));
-                    histDataCorr->Write(Form("Weight_%sC_%i%i%i%i_%i",      targetArr, Q2Bin,
+                    histWeight->Write(Form("Weight_%sC_%i%i%i%i_%i",      targetArr, Q2Bin,
                                 NuBin, ZhCounter, Pt2Counter, gen));
                     histDataCorr2->Write(Form("DataCorr2_%sFe_%i%i%i%i_%i", targetArr, Q2Bin,
                                 NuBin, ZhCounter, Pt2Counter, gen));
-                    histDataCorr->Write(Form("DataCorr_%sFe_%i%i%i%i_%i",   targetArr, Q2Bin,
+                    histDataGen->Write(Form("DataGen_%sFe_%i%i%i%i_%i",   targetArr, Q2Bin,
                                 NuBin, ZhCounter, Pt2Counter, gen));
-                    histDataCorr->Write(Form("Weight_%sFe_%i%i%i%i_%i",     targetArr, Q2Bin,
+                    histWeight->Write(Form("Weight_%sFe_%i%i%i%i_%i",     targetArr, Q2Bin,
                                 NuBin, ZhCounter, Pt2Counter, gen));
                     histDataCorr2->Write(Form("DataCorr2_%sPb_%i%i%i%i_%i", targetArr, Q2Bin,
                                 NuBin, ZhCounter, Pt2Counter, gen));
-                    histDataCorr->Write(Form("DataCorr_%sPb_%i%i%i%i_%i",   targetArr, Q2Bin,
+                    histDataGen->Write(Form("DataGen_%sPb_%i%i%i%i_%i",   targetArr, Q2Bin,
                                 NuBin, ZhCounter, Pt2Counter, gen));
-                    histDataCorr->Write(Form("Weight_%sPb_%i%i%i%i_%i",     targetArr, Q2Bin,
+                    histWeight->Write(Form("Weight_%sPb_%i%i%i%i_%i",     targetArr, Q2Bin,
                                 NuBin, ZhCounter, Pt2Counter, gen));
                 }
 

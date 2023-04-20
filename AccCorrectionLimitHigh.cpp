@@ -169,8 +169,7 @@ int main(int argc, char* argv[]) {
                 // are truly N pions events
                 histFalPos->Divide(histDetected, histTotDetected, 1, 1, "B");
                 // Check that the acceptance factors are smaller than one
-                // AccHist1(histAccFactors);
-                // AccHist1(histFalPos);
+
                 // Apply the correction factors
                 histFinalFactor->Divide(histAccFactors, histFalPos, 1, 1);
                 AccLimit(histFinalFactor, limit);
@@ -203,12 +202,14 @@ int main(int argc, char* argv[]) {
                 histTotDetected->Reset();
 
             } // End Pt2 loop
+            
             delete ntupleData;
             delete ntupleSimul_gen;
             delete ntupleSimul_rec;
             delete evntData;
             delete evntSimul_gen;
             delete evntSimul_rec;
+            
         } // End Zh loop
     } // End pion number loop
     fileData->Close();
@@ -221,7 +222,7 @@ int main(int argc, char* argv[]) {
     delete histData        ;
     delete histFalPos      ;
     delete histAccFactors  ;
-    delete histFinalFactor    ;
+    delete histFinalFactor ;
     delete histDataCorr2   ;
     return 0;
 }
