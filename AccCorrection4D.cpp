@@ -5,28 +5,32 @@
 // For simultion use the tuple generate by the code VecSumSimul.cpp
 // For data the tuple generate by the code VecSum.cpp
 // It can be compile with
-// g++ -Wall -fPIC -I./include `root-config --cflags` AccCorrection.cpp -o ./bin/AccCorrection `root-config --glibs` ./include/Acc.h
+// g++ -Wall -fPIC -I./include `root-config --cflags` AccCorrectionNomError.cpp -o ./bin/AccCorrection `root-config --glibs` ./include/Acc.h
 // For the target name use (C,Fe,Pb) for the solids targets and (DC,DFe,DPb) for the liquid target
 
 #include "Acc.h"
 
-int main(int argc, char* argv[]) { 
+int EmptyBinRec(TH1F* histDetected, TH1F* histFinalFactor);
 
+int main(int argc, char* argv[]) { 
+    
     // Set Pt2 Binning
     Pt2_BINS[0] = 0.;
     for(int i = 1; i < N_Pt2; i++) {
-        Pt2_BINS[i] = Pt2_BINS[i-1] + Delta_Pt2;
+       Pt2_BINS[i] = Pt2_BINS[i-1] + Delta_Pt2;
     }
 
+    TString systematic = "DZHigh";
+
+    outputDirectory = outputDirectory + "Systematic/" + systematic + "/";
+    
     if(argc != 4) {
         std::cout << "Incorrect number of arguments" << std::endl;  
         return 1;
     } 
+   
     TStopwatch t;
 
-    TString systematic = "4DAcc";
-    outputDirectory = outputDirectory + "Systematic/" + systematic + "/";
-    
     std::cout << "Start" << std::endl;
 
     std::string target = argv[1];
@@ -72,31 +76,27 @@ int main(int argc, char* argv[]) {
 
     // Create some variables to use inside the for loops
     TString tupleDataName;
-    TCut Q2Cut, NuCut, ZhCut, VCData, cutsData;
-    TCut Q2Cut_gen, NuCut_gen, ZhCut_gen, cutsSimul_gen, GenCut; 
-    TCut Q2Cut_rec, NuCut_rec, ZhCut_rec, cutsSimul_rec, RecCut;
+    TCut Q2Cut, NuCut, ZhCut, Pt2Cut, VCData, cutsData;
+    TCut Q2Cut_gen, NuCut_gen, ZhCut_gen, Pt2Cut_gen, cutsSimul_gen, GenCut; 
+    TCut Q2Cut_rec, NuCut_rec, ZhCut_rec, Pt2Cut_rec, cutsSimul_rec, RecCut;
     TCut YCCut = "TMath::Abs(YC)<1.4";
     // Select liquid or solid target
     if(targetArr[0] == 'D') { VCData  = "VC_TM == 1.";}
     else {VCData  = "VC_TM == 2.";}
-    std::cout << Form("Simul target %s, Target %s", simulTarget, targetArr) << " and "
-                << VCData << std::endl;
+    std::cout << Form("Simul target %s, Target %s", simulTarget, targetArr) << " and " << VCData << std::endl;
 
     // Create all the necessary histograms
-    TH1F* histDetected    = new TH1F("Detected",     "", N_Pt2, 0, 3);
-    TH1F* histTotDetected = new TH1F("TotDetected",  "", N_Pt2, 0, 3);
-    TH1F* histThrown      = new TH1F("Thrown",       "", N_Pt2, 0, 3);
-    TH1F* histData        = new TH1F("Data",         "", N_Pt2, 0, 3);
-    TH1F* histFalPos      = new TH1F("FalPosFactor", "", N_Pt2, 0, 3);
-    TH1F* histAccFactors  = new TH1F("AccFactor",    "", N_Pt2, 0, 3);
-    TH1F* histDataCorr    = new TH1F("DataCorr",     "", N_Pt2, 0, 3);
-    TH1F* histDataCorr2   = new TH1F("DataCorr2",    "", N_Pt2, 0, 3);
+    TH1F* histDetected    = new TH1F("Detected",     "", N_Pt2, Pt2_MIN, Pt2_MAX);
+    TH1F* histTotDetected = new TH1F("TotDetected",  "", N_Pt2, Pt2_MIN, Pt2_MAX);
+    TH1F* histThrown      = new TH1F("Thrown",       "", N_Pt2, Pt2_MIN, Pt2_MAX);
+    TH1F* histData        = new TH1F("Data",         "", N_Pt2, Pt2_MIN, Pt2_MAX);
+    TH1F* histFinalFactor = new TH1F("FinalFactor",  "", N_Pt2, Pt2_MIN, Pt2_MAX);
+    TH1F* histDataCorr2   = new TH1F("DataCorr2",    "", N_Pt2, Pt2_MIN, Pt2_MAX);
 
     // Store the sum of the weights A.K.A the erros (in the other histograms if save it by other methods)
     histData->Sumw2();
     histThrown->Sumw2();
     histTotDetected->Sumw2();
-    histDetected->Sumw2();
 
     for(int gen = 1; gen <= N_PION ; gen++) { // Loops in every number of generated pions
 
@@ -116,12 +116,12 @@ int main(int argc, char* argv[]) {
             Q2Cut_gen   = Form("Q2_gen>%f&&Q2_gen<%f", Q2_BINS[Q2Bin], Q2_BINS[Q2Bin+1]);
             NuCut_gen   = Form("Nu_gen>%f&&Nu_gen<%f", Nu_BINS[NuBin], Nu_BINS[NuBin+1]);
             ZhCut_gen   = Form("Zh_gen>%f&&Zh_gen<%f", Zh_BINS[ZhCounter],
-                    Zh_BINS[ZhCounter+1]);
+                                                        Zh_BINS[ZhCounter+1]);
 
             Q2Cut_rec   = Form("Q2_rec>%f&&Q2_rec<%f", Q2_BINS[Q2Bin], Q2_BINS[Q2Bin+1]);
             NuCut_rec   = Form("Nu_rec>%f&&Nu_rec<%f", Nu_BINS[NuBin], Nu_BINS[NuBin+1]);
             ZhCut_rec   = Form("Zh_rec>%f&&Zh_rec<%f", Zh_BINS[ZhCounter], 
-                    Zh_BINS[ZhCounter+1]);
+                                                        Zh_BINS[ZhCounter+1]);
 
             cutsData  = Q2Cut&&NuCut&&ZhCut&&YCCut&&VCData;
             cutsSimul_gen = Q2Cut_gen&&NuCut_gen&&ZhCut_gen&&GenCut;
@@ -144,34 +144,31 @@ int main(int argc, char* argv[]) {
             ntupleSimul_gen->SetEventList(evntSimul_gen);
             ntupleSimul_rec->SetEventList(evntSimul_rec);
 
-            ntupleData->Project("Data", "Pt2", cutsData);
-            if(EmptyHist(histData) == 1){ continue; }
-            ntupleSimul_rec->Project("Detected",    "Pt2_rec", cutsSimul_rec&&GenCut);
-            ntupleSimul_gen->Project("Thrown",      "Pt2_gen", cutsSimul_gen);
-            ntupleSimul_rec->Project("TotDetected", "Pt2_rec", cutsSimul_rec);
 
-            // Calculate the Acceptance factor
-            histAccFactors->Divide(histDetected, histThrown, 1, 1, "B");
-            // Calculate a factor that reprensent how many of the detected as N pion events
-            // are truly N pions events
-            histFalPos->Divide(histDetected, histTotDetected, 1, 1, "B");
-            // Check that the acceptance factors are smaller than one
+            ntupleData->Project("Data", "Pt2");
+            // If there isn't any event in data skip this bin
+            if(EmptyHist(histData) == 1){ continue; }
+            ntupleSimul_rec->Project("Detected",    "Pt2_rec");
+            //if(EmptyHist(histDetected) == 1){ continue; }
+            ntupleSimul_gen->Project("Thrown",      "Pt2_gen");
+            ntupleSimul_rec->Project("TotDetected", "Pt2_rec");
+
+            histFinalFactor->Divide(histTotDetected, histThrown, 1, 1, "B");
+
+            EmptyBinRec(histDetected, histFinalFactor);
+
             // Apply the correction factors
-            histDataCorr->Divide(histData, histAccFactors, 1, 1);
-            histDataCorr2->Multiply(histDataCorr, histFalPos, 1, 1);
+            histDataCorr2->Divide(histData, histFinalFactor, 1, 1);
+
 
             // Save the histograms in the output file
             fileOutput->cd();
 
-            histData->Write(Form("Data_%s_%i%i%i_%i",               targetArr, Q2Bin,
+            histData->Write(Form("Data_%s_%i%i%i_%i",            targetArr, Q2Bin,
                         NuBin, ZhCounter, gen));
-            histDataCorr2->Write(Form("corr_data_Pt2_%s_%i%i%i_%i", targetArr, Q2Bin, 
+            histDataCorr2->Write(Form("corr_data_Pt2_%s_%i%i%i_%i",  targetArr, Q2Bin, 
                         NuBin, ZhCounter, gen));
-            histDataCorr->Write(Form("DataCorr_%s_%i%i%i_%i",       targetArr, Q2Bin, 
-                        NuBin, ZhCounter, gen));
-            histFalPos->Write(Form("FalPosFactor_%s_%i%i%i_%i",     targetArr, Q2Bin, 
-                        NuBin, ZhCounter, gen));
-            histAccFactors->Write(Form("AccFactor_%s_%i%i%i_%i",    targetArr, Q2Bin, 
+            histFinalFactor->Write(Form("FinalFactor_%s_%i%i%i_%i", targetArr, Q2Bin, 
                         NuBin, ZhCounter, gen));
 
             gROOT->cd();
@@ -179,13 +176,11 @@ int main(int argc, char* argv[]) {
             // Set the histograms values to 0
             histData->Reset();
             histDataCorr2->Reset();
-            histDataCorr->Reset();
-            histFalPos->Reset();
-            histAccFactors->Reset();
             histThrown->Reset();
-            histDetected->Reset();
             histTotDetected->Reset();
+            histFinalFactor->Reset();
 
+            
             delete ntupleData;
             delete ntupleSimul_gen;
             delete ntupleSimul_rec;
@@ -200,14 +195,25 @@ int main(int argc, char* argv[]) {
     fileSimul->Close();
     fileOutput->Close();
     t.Print();
-    delete histDetected    ;
     delete histTotDetected ;
     delete histThrown      ;
     delete histData        ;
-    delete histFalPos      ;
-    delete histAccFactors  ;
-    delete histDataCorr    ;
     delete histDataCorr2   ;
+    delete histFinalFactor ;
+    return 0;
+
+}
+
+int EmptyBinRec(TH1F* histDetected, TH1F* histFinalFactor) {
+
+    for(int bin = 1 ; bin <= histDetected->GetNbinsX() ; bin++) {
+
+        if(histDetected->GetBinContent(bin) == 0) { 
+            histFinalFactor->SetBinContent(bin, 0);
+            histFinalFactor->SetBinError(bin, 0);
+        }
+    }
+
     return 0;
 
 }

@@ -48,7 +48,6 @@ int main(int argc, char* argv[]) {
         fileDataName = Form(dataDirectory + "MoreEnergy_%s.root", solidTarget);
     } else{
         m = n+1;
-        //fileDataName = Form("/eos/user/m/mbarrial/Data/VecSum_%s.root", targetArr);
         fileDataName = Form(dataDirectory + "MoreEnergy_%s.root", targetArr);
     }
 
@@ -163,7 +162,6 @@ int main(int argc, char* argv[]) {
 
                 ntupleData->Project("Data", "PhiPQ", Pt2Cut);
                 if(EmptyHist(histData) == 1){ continue; } // If there isn't any event in data skip this bin
-                                                          // Generate histograms of the all dectected pion, all generated pion, and the pions that was correct dectected
                 ntupleSimul_rec->Project("Detected",    "PhiPQ_rec", Pt2Cut_rec&&GenCut);
                 ntupleSimul_gen->Project("Thrown",      "PhiPQ_gen", Pt2Cut_gen);
                 ntupleSimul_rec->Project("TotDetected", "PhiPQ_rec", Pt2Cut_rec);
@@ -205,14 +203,17 @@ int main(int argc, char* argv[]) {
                 histTotDetected->Reset();
 
             } // End Pt2 loop
+
             delete ntupleData;
             delete ntupleSimul_gen;
             delete ntupleSimul_rec;
             delete evntData;
             delete evntSimul_gen;
             delete evntSimul_rec;
+            
         } // End Zh loop
     } // End pion number loop
+
     fileData->Close();
     fileSimul->Close();
     fileOutput->Close();
@@ -225,5 +226,7 @@ int main(int argc, char* argv[]) {
     delete histAccFactors  ;
     delete histDataCorr    ;
     delete histDataCorr2   ;
+
     return 0;
+
 }

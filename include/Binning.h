@@ -2,7 +2,7 @@
 // Directories to read and save the data and plots ,normaly saves as NuQ2Yo-?Phi-?Pt-?Z/ with ? the number of bins
 const TString dataDirectory  = "/work/mbarrial/Data/";
 const TString inputDirectory  = "/work/mbarrial/Data/";
-TString outputDirectory = "/work/mbarrial/Data/60/NomError/";
+TString outputDirectory = "/work/mbarrial/Data/60/";
 const int N_Pt2 = 60;
 float Pt2_BINS[N_Pt2+1];
 

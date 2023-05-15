@@ -153,11 +153,11 @@ int main(int argc, char* argv[]) {
                 // If there isn't any event in data skip this bin
                 if(EmptyHist(histData) == 1){ continue; }
                 ntupleSimul_rec->Project("Detected",    "PhiPQ_rec", Pt2Cut_rec&&GenCut);
-                if(EmptyHist(histDetected) == 1){ continue; }
+                //if(EmptyHist(histDetected) == 1){ continue; }
                 ntupleSimul_gen->Project("Thrown",      "PhiPQ_gen", Pt2Cut_gen);
                 ntupleSimul_rec->Project("TotDetected", "PhiPQ_rec", Pt2Cut_rec);
 
-                histFinalFactor->Divide(histThrown, histTotDetected, 1, 1, "B");
+                histFinalFactor->Divide(histTotDetected, histThrown, 1, 1, "B");
 
                 EmptyBinRec(histDetected, histFinalFactor);
 
